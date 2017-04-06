@@ -1,11 +1,11 @@
 import {h, Router} from 'zaitun';
 
 export default class RootCompoent{
-    view(obj){
+    view({model, dispatch}){
         return h('div',[
            Router.CM.child.view({
-               model:obj.model.child,
-               dispatch:ac=>obj.dispatch({type:'CHILD', childAction:ac})
+               model:model.child,
+               dispatch:ac=>dispatch({type:'CHILD', childAction:ac})
             }) 
         ])
     }
