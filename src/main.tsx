@@ -15,7 +15,7 @@ const routes=[
 
 bootstrap({
   containerDom:'#app',
-  mainComponent:rootCom,
+  mainComponent:rootCom,  
   routes:routes,
   activePath:'/counter',
   devTool:devTool

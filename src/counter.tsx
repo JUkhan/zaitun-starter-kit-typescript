@@ -1,22 +1,46 @@
 
 /** @jsx html */
-import{jsx, Action} from 'zaitun';
+import{ Action, Router, jsx} from 'zaitun';
+import{EffectSubscription} from './effect';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/delay';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mapTo';
+import 'rxjs/add/operator/filter';
+
 const html=jsx.html;
 export default class counter{
+    es:EffectSubscription;
+    constructor(){
+        this.es=new EffectSubscription();
+    }
     init(){
         return {count:0}
     }
-    view({model,dispatch}){
+    onViewInit(model?:any, dispatch?:any){
+        const lazyEffect=Router.CM.actions$.whenAction('lazy')
+        .delay(500)
+        .map(ac=>({...ac,type:'inc'}));
+        this.es.addEffect(lazyEffect);
+         
+    }
+    onDestroy(){
+        this.es.dispose();
+    }
+    view({model,dispatch}){       
         return <span>
-            <button on-click={[dispatch,{type:'inc'}]}>+</button>
+            <button on-click={_=>dispatch({type:'inc'})}>+</button>
+            <button  on-click={[dispatch,{type:'lazy', dispatch}]}>+ (Async)</button>
             <button on-click={[dispatch,{type:'dec'}]}>-</button>
-            <b>{model.count}</b>
+            <b>{model.msg||model.count}</b>
         </span>
     }
-    update(model, action:Action){
+    update(model?:any, action?:Action){
+        Router.CM.actions$.dispatch(action);
          switch (action.type) {
-             case 'inc': return {count:model.count+1};
-             case 'dec': return {count:model.count-1};
+             case 'inc': return {count:model.count+1, msg:''};
+             case 'dec': return {count:model.count-1, msg:''};
+             case 'lazy': return {count:model.count, msg:'loaading...'};
              default:
                  return model;
          }   

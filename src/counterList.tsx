@@ -26,7 +26,13 @@ export default class CounterList{
             }
         }
         return {nextId: times, counters}; 
-    }   
+    } 
+    onViewInit(){
+        this.Counter.onViewInit();
+    }
+    onDestroy(){
+        this.Counter.onDestroy();
+    }  
     view({model, dispatch}){
         
         return <div classNames="card card-outline-secondary mb-3 text-center">
