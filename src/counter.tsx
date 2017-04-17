@@ -18,11 +18,11 @@ export default class counter{
         return {count:0}
     }
     onViewInit(model?:any, dispatch?:any){
-        const lazyEffect=Router.CM.actions$.whenAction('lazy')
-        .delay(500)
-        .map(ac=>({...ac,type:'inc'}));
-        this.es.addEffect(lazyEffect);
-         
+       this.es.addEffect(action$=>
+            action$.whenAction('lazy')
+                   .delay(1000)
+                   .map(ac=>({...ac,type:'inc'}))
+        );         
     }
     onDestroy(){
         this.es.dispose();
