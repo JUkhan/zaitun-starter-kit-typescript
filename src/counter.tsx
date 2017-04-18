@@ -3,16 +3,20 @@
 import{ Action, Router, jsx} from 'zaitun';
 import{EffectSubscription} from './effect';
 import {Observable} from 'rxjs/Observable';
+
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mapTo';
 import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/observable/of';
 
 const html=jsx.html;
 export default class counter{
-    es:EffectSubscription;
+    es:EffectSubscription;    
     constructor(){
-        this.es=new EffectSubscription();
+        this.es=new EffectSubscription();      
     }
     init(){
         return {count:0}
@@ -22,7 +26,15 @@ export default class counter{
             action$.whenAction('lazy')
                    .delay(1000)
                    .map(ac=>({...ac,type:'inc'}))
-        );         
+        ); 
+
+        this.es.addEffect(action$=>
+            action$.whenAction('input')
+                   .debounceTime(300)
+                   .distinctUntilChanged()
+                   .switchMap(val=>Observable.of({...val, type:'search', payload:'res: '+val.value}))
+                   .map(res=>res)
+        );        
     }
     onDestroy(){
         this.es.dispose();
@@ -33,6 +45,7 @@ export default class counter{
             <button  on-click={[dispatch,{type:'lazy', dispatch}]}>+ (Async)</button>
             <button on-click={[dispatch,{type:'dec'}]}>-</button>
             <b>{model.msg||model.count}</b>
+            <input type="text" on-input={e=>Router.CM.actions$.dispatch({type:'input', value:e.target.value, dispatch})}/>
         </span>
     }
     update(model?:any, action?:Action){
@@ -41,6 +54,7 @@ export default class counter{
              case 'inc': return {count:model.count+1, msg:''};
              case 'dec': return {count:model.count-1, msg:''};
              case 'lazy': return {count:model.count, msg:'loaading...'};
+             case 'search': return {count:model.count, msg:action.payload};
              default:
                  return model;
          }   
