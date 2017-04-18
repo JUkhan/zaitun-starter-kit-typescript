@@ -19,7 +19,7 @@ export default class counter{
         this.es=new EffectSubscription();      
     }
     init(){
-        return {count:0}
+        return {count:0, msg:''}
     }
     onViewInit(model?:any, dispatch?:any){
        this.es.addEffect(action$=>
@@ -33,7 +33,7 @@ export default class counter{
                    .debounceTime(300)
                    .distinctUntilChanged()
                    .switchMap(val=>Observable.of({...val, type:'search', payload:'res: '+val.value}))
-                   .map(res=>res)
+                   
         );        
     }
     onDestroy(){
@@ -42,10 +42,10 @@ export default class counter{
     view({model,dispatch}){       
         return <span>
             <button on-click={_=>dispatch({type:'inc'})}>+</button>
-            <button  on-click={[dispatch,{type:'lazy', dispatch}]}>+ (Async)</button>
+            <button on-click={[dispatch,{type:'lazy', dispatch}]}>+ (Async)</button>
             <button on-click={[dispatch,{type:'dec'}]}>-</button>
             <b>{model.msg||model.count}</b>
-            <input type="text" on-input={e=>Router.CM.actions$.dispatch({type:'input', value:e.target.value, dispatch})}/>
+            <input on-input={e=>Router.CM.actions$.dispatch({type:'input', value:e.target.value, dispatch})} type="text" value={model.msg}/>
         </span>
     }
     update(model?:any, action?:Action){
