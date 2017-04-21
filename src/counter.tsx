@@ -30,9 +30,9 @@ export default class counter{
 
         this.es.addEffect(action$=>
             action$.whenAction('input')
-                   .debounceTime(300)
+                   .debounceTime(500)
                    .distinctUntilChanged()
-                   .switchMap(val=>Observable.of({...val, type:'search', payload:'res: '+val.value}))
+                   .switchMap(val=>Observable.of({...val, type:'search'}))
                    
         );        
     }
@@ -45,7 +45,7 @@ export default class counter{
             <button on-click={[dispatch,{type:'lazy', dispatch}]}>+ (Async)</button>
             <button on-click={[dispatch,{type:'dec'}]}>-</button>
             <b>{model.msg||model.count}</b>
-            <input on-input={e=>Router.CM.actions$.dispatch({type:'input', value:e.target.value, dispatch})} type="text" value={model.msg}/>
+            <input on-input={e=>Router.CM.actions$.dispatch({type:'input', payload:e.target.value, dispatch})} type="text" value={model.msg}/>
         </span>
     }
     update(model?:any, action?:Action){

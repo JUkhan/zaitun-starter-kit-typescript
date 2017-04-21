@@ -10,7 +10,8 @@ declare const System:any;
 const routes=[
   {path:'/counter', component:counterCom},
   {path:'/counterList/:times/:msg', loadComponent:()=>System.import('./counterList')},
-  {path:'/todos', loadComponent:()=>System.import('./todos/todos')},  
+  {path:'/todos', loadComponent:()=>System.import('./todos/todos')}, 
+  {path:'/animation', loadComponent:()=>System.import('./Animation')}, 
 ];
 
 bootstrap({
@@ -18,6 +19,6 @@ bootstrap({
   mainComponent:rootCom,  
   routes:routes,
   activePath:'/counter',
-  devTool:devTool
+  //devTool:devTool
 });
 
