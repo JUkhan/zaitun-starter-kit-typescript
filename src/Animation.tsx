@@ -11,10 +11,10 @@ export default class Animation{
     constructor(){
         this.es=new EffectSubscription();
     }
-    init(){
+    init(){        
         return {boxList:[]}
     }
-    onViewInit(){
+    afterViewRender(){
         this.es.addEffect(action$=>
             action$.whenAction('mousemove')
             .mergeMap(action=>{                
@@ -38,7 +38,7 @@ export default class Animation{
         this.es.dispose();
     }
     view({model, dispatch}){
-        return <div  on-mousemove={ev=>Router.CM.actions$.next({type:'mousemove',payload:ev,dispatch})}
+        return <div  on-mousemove={ev=>Router.CM.action$.next({type:'mousemove',payload:ev,dispatch})}
                 style={{width:'100%', height:'400px',border:'#ddd 1px solid'}}>
             {model.boxList.map(box=><this.Box model={box}/>)}
         </div>
@@ -47,11 +47,11 @@ export default class Animation{
         return <div style={model}></div>
     }
     update(model, action){
-        Router.CM.actions$.dispatch(action);
+        Router.CM.action$.dispatch(action);
         switch (action.type) {
             case 'new-box':
                 model.boxList.push(action.payload);
-                if(model.boxList.length>25){
+                if(model.boxList.length>50){
                     model.boxList.shift();
                 } 
                 return {boxList:model.boxList};       

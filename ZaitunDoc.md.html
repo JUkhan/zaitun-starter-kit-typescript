@@ -238,7 +238,7 @@ So, we need a main/root component where nav component(Router.CM.child) should be
 </blockquote>
 <h3><a id="Component_Life_cycle_hook_methods_250"></a>Component Life cycle hook methods</h3>
 <pre><code class="language-javascript">    init(dispatch, routeParams){}
-    onViewInit(model, dispatch){}
+    afterViewRender(model, dispatch){}
     canDeactivate(){
         <span class="hljs-keyword">return</span> bool|<span class="hljs-built_in">Promise</span>
     }

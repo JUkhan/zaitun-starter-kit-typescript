@@ -21,7 +21,8 @@ export default class counter{
     init(){
         return {count:0, msg:''}
     }
-    onViewInit(model?:any, dispatch?:any){
+    
+    afterViewRender(model?:any, dispatch?:any){
        this.es.addEffect(action$=>
             action$.whenAction('lazy')
                    .delay(1000)
@@ -45,11 +46,11 @@ export default class counter{
             <button on-click={[dispatch,{type:'lazy', dispatch}]}>+ (Async)</button>
             <button on-click={[dispatch,{type:'dec'}]}>-</button>
             <b>{model.msg||model.count}</b>
-            <input on-input={e=>Router.CM.actions$.dispatch({type:'input', payload:e.target.value, dispatch})} type="text" value={model.msg}/>
+            <input on-input={e=>Router.CM.action$.dispatch({type:'input', payload:e.target.value, dispatch})} type="text" value={model.msg}/>
         </span>
     }
     update(model?:any, action?:Action){
-        Router.CM.actions$.dispatch(action);
+        Router.CM.action$.dispatch(action);
          switch (action.type) {
              case 'inc': return {count:model.count+1, msg:''};
              case 'dec': return {count:model.count-1, msg:''};

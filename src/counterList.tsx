@@ -27,8 +27,8 @@ export default class CounterList{
         }
         return {nextId: times, counters}; 
     } 
-    onViewInit(){
-        this.Counter.onViewInit();
+    afterViewRender(){
+        this.Counter.afterViewRender();
     }
     onDestroy(){
         this.Counter.onDestroy();

@@ -1,13 +1,12 @@
 import {h, Router} from 'zaitun';
 import {Actions} from './effect';
 export default class RootCompoent{
-    onViewInit(){   
-
+    afterViewRender(){ 
        //set actions to Router.CM. so that we can use it
        //through out the app
-       const actions$=new Actions();
-       actions$.subscribe(action=>{});       
-       Router.CM.actions$=actions$;
+       const action$=new Actions();
+       action$.subscribe(action=>{});       
+       Router.CM.action$=action$;
     }
     view({model, dispatch}){
         return h('div',[

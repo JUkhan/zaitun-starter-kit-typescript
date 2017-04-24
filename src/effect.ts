@@ -19,7 +19,7 @@ export class EffectSubscription extends Subscription{
         super();        
     }    
     addEffect(streamCallback:(action$:Actions)=>Observable<any>){
-        const actionStream=streamCallback(Router.CM.actions$);
+        const actionStream=streamCallback(Router.CM.action$);
         this.add(actionStream.subscribe(ac=>{
             if(typeof ac.dispatch==='function'){
                 ac.dispatch(ac);

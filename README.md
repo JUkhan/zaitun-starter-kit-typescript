@@ -252,11 +252,11 @@ The routes are an array of route definitions. This route definition has the foll
 ### Component Life cycle hook methods
 ```javascript    
     init(dispatch, routeParams){}
-    onViewInit(model, dispatch){}
+    afterViewRender(model, dispatch){}
     canDeactivate(){
         return bool|Promise
     }
     onDestroy(){}
 ```    
-inprogress...
+in-progress...
 
