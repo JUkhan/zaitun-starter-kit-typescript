@@ -19,6 +19,6 @@ bootstrap({
   mainComponent:rootCom,  
   routes:routes,
   activePath:'/counter',
-  //SdevTool:devTool
+  devTool:devTool
 });
 

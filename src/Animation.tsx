@@ -38,7 +38,7 @@ export default class Animation{
         this.es.dispose();
     }
     view({model, dispatch}){
-        return <div  on-mousemove={ev=>Router.CM.action$.next({type:'mousemove',payload:ev,dispatch})}
+        return <div  on-mousemove={ev=>Router.CM.action$.next({type:'mousemove', payload:ev, dispatch})}
                 style={{width:'100%', height:'400px',border:'#ddd 1px solid'}}>
             {model.boxList.map(box=><this.Box model={box}/>)}
         </div>
@@ -54,7 +54,7 @@ export default class Animation{
                 if(model.boxList.length>50){
                     model.boxList.shift();
                 } 
-                return {boxList:model.boxList};       
+                return {boxList:model.boxList.slice(0)};       
             default:
                 return model;
         }
