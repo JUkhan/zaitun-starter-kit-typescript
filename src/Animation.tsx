@@ -19,7 +19,11 @@ export default class Animation{
             action$.whenAction('mousemove')
             .mergeMap(action=>{                
                 const ev=action.payload;
-                action.payload={
+                action.payload={ 
+                    key:Math.floor(Math.random() * 1000000),                   
+                    opacity:'0', transition: 'opacity 1s',
+                    delayed:{opacity:'1'},
+                    remove:{opacity:'0'},
                     width:'20px',
                     height:'20px',                    
                     top:(ev.clientY-70)+'px',
@@ -40,18 +44,16 @@ export default class Animation{
     view({model, dispatch}){
         return <div  on-mousemove={ev=>Router.CM.action$.next({type:'mousemove', payload:ev, dispatch})}
                 style={{width:'100%', height:'400px',border:'#ddd 1px solid'}}>
-            {model.boxList.map(box=><this.Box model={box}/>)}
+            {model.boxList.map(box=><div key={box.key}  style={box}></div>)}
         </div>
     }
-    Box({model, key}){       
-        return <div style={model}></div>
-    }
+    
     update(model, action){
         Router.CM.action$.dispatch(action);
         switch (action.type) {
             case 'new-box':
                 model.boxList.push(action.payload);
-                if(model.boxList.length>50){
+                if(model.boxList.length>25){
                     model.boxList.shift();
                 } 
                 return {boxList:model.boxList.slice(0)};       

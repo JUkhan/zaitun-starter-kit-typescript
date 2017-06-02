@@ -26,7 +26,7 @@ export default class counter{
        this.es.addEffect(action$=>
             action$.whenAction('lazy')
                    .delay(1000)
-                   .map(ac=>({...ac,type:'inc'}))
+                   .map(ac=>({...ac, type:'inc'}))
         ); 
 
         this.es.addEffect(action$=>

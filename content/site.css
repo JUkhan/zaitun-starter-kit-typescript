@@ -36,3 +36,75 @@ body {
   text-overflow: ellipsis;
   width: inherit;
 }
+
+/* Order Animation*/
+.oa{
+    background: #fafafa;
+    font-family: sans-serif;
+    width: 80%;
+    padding: 10px;    
+}
+ .oa h1 {
+        font-weight: normal;
+      }
+.oa .btn {
+  display: inline-block;
+  cursor: pointer;
+  background: #fff;
+  box-shadow: 0 0 1px rgba(0, 0, 0, .2);
+  padding: .5em .8em;
+  transition: box-shadow .05s ease-in-out;
+  -webkit-transition: box-shadow .05s ease-in-out;
+}
+.oa .btn:hover {
+  box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+}
+.oa .btn:active, .oa .active, .oa .active:hover {
+  box-shadow: 0 0 1px rgba(0, 0, 0, .2),
+              inset 0 0 4px rgba(0, 0, 0, .1);
+}
+.oa .add {
+    float: right;
+}
+.oa .list {
+  position: relative;
+}
+.oa .row {
+  overflow: hidden;
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  left: 0px;
+  margin: .5em 0;
+  padding: 1em;
+  background: #fff;
+  box-shadow: 0 0 1px rgba(0, 0, 0, .2);
+  transition: transform .5s ease-in-out, opacity .5s ease-out, left .5s ease-in-out;
+  -webkit-transition: transform .5s ease-in-out, opacity .5s ease-out, left .5s ease-in-out;
+}
+.oa .row div {
+  display: inline-block;
+  vertical-align: middle;
+}
+.oa .row > div:nth-child(1) {
+  width: 5%;
+}
+.oa .row > div:nth-child(2) {
+  width: 30%;
+}
+.oa .row > div:nth-child(3) {
+  width: 65%;
+}
+.oa .rm-btn {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #C25151;
+  width: 1.4em;
+  height: 1.4em;
+  text-align: center;
+  line-height: 1.4em;
+  padding: 0;
+}
+/* end of Order animation */

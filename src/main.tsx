@@ -12,6 +12,7 @@ const routes=[
   {path:'/counterList/:times/:msg', loadComponent:()=>System.import('./counterList')},
   {path:'/todos', loadComponent:()=>System.import('./todos/todos')}, 
   {path:'/animation', loadComponent:()=>System.import('./Animation')}, 
+  {path:'/orderAnimation',loadComponent:()=>System.import('./OrderAnimation')}
 ];
 
 bootstrap({
@@ -19,6 +20,6 @@ bootstrap({
   mainComponent:rootCom,  
   routes:routes,
   activePath:'/counter',
-  devTool:devTool
+  //devTool:devTool
 });
 
