@@ -12,7 +12,8 @@ const routes=[
   {path:'/counterList/:times/:msg', loadComponent:()=>System.import('./counterList')},
   {path:'/todos', loadComponent:()=>System.import('./todos/todos')}, 
   {path:'/animation', loadComponent:()=>System.import('./Animation')}, 
-  {path:'/orderAnimation',loadComponent:()=>System.import('./OrderAnimation')}
+  {path:'/orderAnimation',loadComponent:()=>System.import('./OrderAnimation')},
+  {path:'/heroAnimation',loadComponent:()=>System.import('./Hero')}
 ];
 
 bootstrap({
