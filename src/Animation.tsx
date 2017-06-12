@@ -31,7 +31,7 @@ export default class Animation{
                     position: 'absolute',
                     backgroundColor: `rgb(${this.random(0, 255)},${this.random(0, 255)},${this.random(0, 255)})`,
                     borderRadius:'.4em',
-                    boxShadow: `-7px -8px 6px -7px rgba(${this.random(0, 255)},${this.random(0, 255)},${this.random(0, 255)},0.75)`
+                    //boxShadow: `-7px -8px 6px -7px rgba(${this.random(0, 255)},${this.random(0, 255)},${this.random(0, 255)},0.75)`
                 };
                 action.type='new-box'
                 return Observable.of(action);
