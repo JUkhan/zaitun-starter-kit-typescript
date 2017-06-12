@@ -42,14 +42,13 @@ export default class Animation{
         this.es.dispose();
     }
     view({model, dispatch}){
-        return <div  on-mousemove={ev=>Router.CM.action$.next({type:'mousemove', payload:ev, dispatch})}
+        return <div  on-mousemove={ev=>Router.CM.action$.dispatch({type:'mousemove', payload:ev, dispatch})}
                 style={{width:'100%', height:'400px',border:'#ddd 1px solid'}}>
             {model.boxList.map(box=><div key={box.key}  style={box}></div>)}
         </div>
     }
     
-    update(model, action){
-        Router.CM.action$.dispatch(action);
+    update(model, action){       
         switch (action.type) {
             case 'new-box':
                 model.boxList.push(action.payload);

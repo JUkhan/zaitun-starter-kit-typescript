@@ -23,13 +23,13 @@ export default class counter{
     }
     
     afterViewRender(model?:any, dispatch?:any){
-       this.es.addEffect(action$=>
+       this.es
+       .addEffect(action$=>
             action$.whenAction('lazy')
                    .delay(1000)
                    .map(ac=>({...ac, type:'inc'}))
-        ); 
-
-        this.es.addEffect(action$=>
+        )
+        .addEffect(action$=>
             action$.whenAction('input')
                    .debounceTime(500)
                    .distinctUntilChanged()
@@ -49,12 +49,13 @@ export default class counter{
             <input on-input={e=>Router.CM.action$.dispatch({type:'input', payload:e.target.value, dispatch})} type="text" value={model.msg}/>
         </span>
     }
-    update(model?:any, action?:Action){
-        Router.CM.action$.dispatch(action);
+    update(model?:any, action?:Action){       
          switch (action.type) {
              case 'inc': return {count:model.count+1, msg:''};
              case 'dec': return {count:model.count-1, msg:''};
-             case 'lazy': return {count:model.count, msg:'loaading...'};
+             case 'lazy':
+              Router.CM.action$.dispatch(action);
+              return {count:model.count, msg:'loaading...'};
              case 'search': return {count:model.count, msg:action.payload};
              default:
                  return model;
