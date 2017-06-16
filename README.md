@@ -245,9 +245,9 @@ The routes are an array of route definitions. This route definition has the foll
 - `path` : the router matches this route's path to the URL in the browser address bar
 - `component` :  the component that the component manager should create when navigating to this route
 - `loadComponent` : the component dynamically loaded when navigating to this route
-- `cache` : Component state should be cached if it set to true
+- `cache` : Component should be cached if it set to true
 
-> `loadComponent` only workes in webpack when your component export as default
+> `loadComponent` only workes in webpack when the component export as default
 
 ### Component Life cycle hook methods
 ```javascript    
