@@ -91,7 +91,7 @@ import Counter from './counter';
 });
 ```
  To see how our component can be tested; here is an example using the ‘tape’ testing library
- ```
+ ```javascript
 import test from 'tape';
 import Counter from './counter';
 const counterCom=new Counter();
