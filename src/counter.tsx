@@ -41,7 +41,7 @@ export default class counter{
         this.es.dispose();
     }
     view({model,dispatch}){       
-        return <span>
+        return <span>            
             <button on-click={_=>dispatch({type:'inc'})}>+</button>
             <button on-click={[dispatch,{type:'lazy', dispatch}]}>+ (Async)</button>
             <button on-click={[dispatch,{type:'dec'}]}>-</button>
@@ -50,7 +50,7 @@ export default class counter{
         </span>
     }
     update(model?:any, action?:Action){       
-         switch (action.type) {
+         switch (action.type) {            
              case 'inc': return {count:model.count+1, msg:''};
              case 'dec': return {count:model.count-1, msg:''};
              case 'lazy':

@@ -1,1 +1,160 @@
-webpackJsonp([2],{17:function(t,n,e){"use strict";function r(t){if(Array.isArray(t)){for(var n=0,e=Array(t.length);n<t.length;n++)e[n]=t[n];return e}return Array.from(t)}function i(t,n){if(!(t instanceof n))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(n,"__esModule",{value:!0});var o=e(0),c=(e.n(o),e(6)),u=Object.assign||function(t){for(var n=1;n<arguments.length;n++){var e=arguments[n];for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r])}return t},a=function(){function t(t,n){for(var e=0;e<n.length;e++){var r=n[e];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}return function(n,e,r){return e&&t(n.prototype,e),r&&t(n,r),n}}(),s=new c.a,l=Symbol("add"),d=Symbol("remove"),m=Symbol("reset"),f=Symbol("counterAction"),y=function(){function t(){i(this,t)}return a(t,[{key:"init",value:function(){return{nextId:0,counters:[]}}},{key:"view",value:function(t){var n=this,r=t.model,i=t.dispatch;return e.i(o.html)("div",{classNames:"card card-outline-secondary mb-3 text-center"},e.i(o.html)("div",{classNames:"card-block"},e.i(o.html)("button",{classNames:"btn btn-primary btn-sm","on-click":[i,{type:l}]},"Add")," ",e.i(o.html)("button",{classNames:"btn btn-primary btn-sm","on-click":[i,{type:m}]},"Reset"),e.i(o.html)("hr",null),e.i(o.html)("div",null,r.counters.map(function(t){return e.i(o.html)(n.CounterItem,{item:t,dispatch:i})}))))}},{key:"CounterItem",value:function(t){var n=t.item,r=t.dispatch;return e.i(o.html)("div",{key:n.id,style:{paddingBottom:"10px"}},e.i(o.html)("button",{classNames:"btn btn-primary btn-sm","on-click":[r,{type:d,id:n.id}]},"Remove")," ",e.i(o.html)(s,{model:n.counter,dispatch:function(t){return r({type:f,id:n.id,action:t})}}))}},{key:"update",value:function(t,n){switch(n.type){case l:var e={id:t.nextId,counter:s.init()};return{counters:[].concat(r(t.counters),[e]),nextId:t.nextId+1};case f:return{nextId:t.nextId,counters:t.counters.map(function(t){return t.id!==n.id?t:u({},t,{counter:s.update(t.counter,n.action)})})};case m:return u({},t,{counters:t.counters.map(function(t){return t.counter=s.init(),t})});case d:return u({},t,{counters:[].concat(r(t.counters.filter(function(t){return t.id!==n.id})))});default:return t}}}]),t}();n.default=y}});
+webpackJsonp([2],{
+
+/***/ 155:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_zaitun__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_zaitun___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_zaitun__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__counter__ = __webpack_require__(58);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/** @jsx html */
+
+var html = __WEBPACK_IMPORTED_MODULE_0_zaitun__["jsx"].html;
+
+var ADD = Symbol('add');
+var REMOVE = Symbol('remove');
+var RESET = Symbol('reset');
+var UPDATE = Symbol('counterAction');
+
+var CounterList = function () {
+    function CounterList() {
+        _classCallCheck(this, CounterList);
+
+        this.Counter = new __WEBPACK_IMPORTED_MODULE_1__counter__["a" /* default */]();
+        this.CounterItem = this.CounterItem.bind(this);
+    }
+
+    _createClass(CounterList, [{
+        key: 'init',
+        value: function init(dispatch, routeParams) {
+            console.log(routeParams);
+            var times = 0,
+                counters = [];
+            if (routeParams !== undefined) {
+                times = +routeParams.times;
+                for (var i = 0; i < times; i++) {
+                    counters.push({ id: i, counter: this.Counter.init() });
+                }
+            }
+            return { nextId: times, counters: counters };
+        }
+    }, {
+        key: 'afterViewRender',
+        value: function afterViewRender() {
+            this.Counter.afterViewRender();
+        }
+    }, {
+        key: 'canDeactivate',
+        value: function canDeactivate() {
+            console.log('can deactivate');
+            return confirm('deactivate');
+        }
+    }, {
+        key: 'onDestroy',
+        value: function onDestroy() {
+            this.Counter.onDestroy();
+        }
+    }, {
+        key: 'view',
+        value: function view(_ref) {
+            var _this = this;
+
+            var model = _ref.model,
+                dispatch = _ref.dispatch;
+
+            return html(
+                'div',
+                { classNames: 'card card-outline-secondary mb-3 text-center' },
+                html(
+                    'div',
+                    { classNames: 'card-block' },
+                    html(
+                        'button',
+                        { classNames: 'btn btn-primary btn-sm', 'on-click': [dispatch, { type: ADD }] },
+                        'Add'
+                    ),
+                    '\xA0',
+                    html(
+                        'button',
+                        { classNames: 'btn btn-primary btn-sm', 'on-click': [dispatch, { type: RESET }] },
+                        'Reset'
+                    ),
+                    html('hr', null),
+                    html(
+                        'div',
+                        null,
+                        model.counters.map(function (item) {
+                            return html(_this.CounterItem, { item: item, dispatch: dispatch });
+                        })
+                    )
+                )
+            );
+        }
+    }, {
+        key: 'CounterItem',
+        value: function CounterItem(_ref2) {
+            var item = _ref2.item,
+                _dispatch = _ref2.dispatch;
+
+            return html(
+                'div',
+                { key: item.id, style: { paddingBottom: '10px' } },
+                html(
+                    'button',
+                    { classNames: 'btn btn-primary btn-sm', 'on-click': [_dispatch, { type: REMOVE, id: item.id }] },
+                    'Remove'
+                ),
+                '\xA0',
+                this.Counter.view({ model: item.counter, dispatch: function dispatch(action) {
+                        return _dispatch({ type: UPDATE, id: item.id, action: action });
+                    } })
+            );
+        }
+    }, {
+        key: 'update',
+        value: function update(model, action) {
+            var _this2 = this;
+
+            switch (action.type) {
+                case ADD:
+                    var newCounter = { id: model.nextId, counter: this.Counter.init() };
+                    return {
+                        counters: [].concat(_toConsumableArray(model.counters), [newCounter]),
+                        nextId: model.nextId + 1
+                    };
+                case UPDATE:
+                    return {
+                        nextId: model.nextId,
+                        counters: model.counters.map(function (item) {
+                            return item.id !== action.id ? item : Object.assign({}, item, { counter: _this2.Counter.update(item.counter, action.action) });
+                        })
+                    };
+                case RESET:
+                    return Object.assign({}, model, { counters: model.counters.map(function (item) {
+                            item.counter = _this2.Counter.init();return item;
+                        }) });
+                case REMOVE:
+                    return Object.assign({}, model, { counters: model.counters.filter(function (it) {
+                            return it.id !== action.id;
+                        }) });
+                default:
+                    return model;
+            }
+        }
+    }]);
+
+    return CounterList;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (CounterList);
+
+/***/ })
+
+});

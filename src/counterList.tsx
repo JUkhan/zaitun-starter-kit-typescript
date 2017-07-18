@@ -30,6 +30,10 @@ export default class CounterList{
     afterViewRender(){
         this.Counter.afterViewRender();
     }
+    canDeactivate(){
+        console.log('can deactivate');
+        return  confirm('deactivate');
+    }
     onDestroy(){
         this.Counter.onDestroy();
     }  
