@@ -1,6 +1,6 @@
 
 //import "babel-polyfill";
-import {bootstrap} from 'zaitun';
+import {bootstrap, IRoute} from 'zaitun';
 import devTool from 'zaitun/devTool/devTool';
 import rootCom from './rootCom';
 import counterCom from './counter';
@@ -18,13 +18,14 @@ class AuthService{
     }
 }
 
-const routes=[
-  {path:'/counter', component:counterCom, canActivate:AuthService},
-  {path:'/counterList/:times/:msg',canDeactivate:AuthService, canActivate:AuthService,  loadComponent:()=>System.import('./counterList')},
-  {path:'/todos',canActivate:AuthService, loadComponent:()=>System.import('./todos/todos')}, 
+const routes:IRoute[]=[
+  {path:'/counter', cacheUpdate_perStateChange:true, cacheStrategy:'local', cache:true, component:counterCom, canActivate:AuthService},
+  {path:'/counterList/:times/:msg', cache:true, canDeactivate:AuthService, canActivate:AuthService,  loadComponent:()=>System.import('./counterList')},
+  {path:'/todos', cache:true, canActivate:AuthService, loadComponent:()=>System.import('./todos/todos')}, 
   {path:'/animation', loadComponent:()=>System.import('./Animation')}, 
   {path:'/orderAnimation',loadComponent:()=>System.import('./OrderAnimation')},
-  {path:'/heroAnimation',loadComponent:()=>System.import('./Hero')}
+  {path:'/heroAnimation', loadComponent:()=>System.import('./Hero')},
+  {path:'/treeView', cache:true, cacheStrategy:'local', loadComponent:()=>System.import('./treeview')}
 ];
 
 bootstrap({
@@ -33,6 +34,7 @@ bootstrap({
   //locationStrategy:'history', 
   routes:routes,
   activePath:'/counter',
-  //devTool:devTool
+  devTool:devTool,
+  cacheStrategy:'default'
 });
 

@@ -40,7 +40,8 @@ export default class counter{
     onDestroy(){
         this.es.dispose();
     }
-    view({model,dispatch}){       
+    view({model,dispatch}){   
+       
         return <span>            
             <button on-click={_=>dispatch({type:'inc'})}>+</button>
             <button on-click={[dispatch,{type:'lazy', dispatch}]}>+ (Async)</button>
@@ -49,9 +50,11 @@ export default class counter{
             <input on-input={e=>Router.CM.action$.dispatch({type:'input', payload:e.target.value, dispatch})} type="text" value={model.msg}/>
         </span>
     }
-    update(model?:any, action?:Action){       
+    update(model?:any, action?:Action){   
+            
          switch (action.type) {            
-             case 'inc': return {count:model.count+1, msg:''};
+             case 'inc':             
+             return {count:model.count+1, msg:''};
              case 'dec': return {count:model.count-1, msg:''};
              case 'lazy':
               Router.CM.action$.dispatch(action);
