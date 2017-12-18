@@ -1,40 +1,44 @@
-
-//import "babel-polyfill";
-import {bootstrap, IRoute} from 'zaitun';
-import devTool from 'zaitun/devTool/devTool';
-import rootCom from './rootCom';
-import counterCom from './counter';
-
+import {bootstrap, RouteOptions} from 'zaitun';
 declare const System:any;
+import rootCom  from './rootComponent';
+import page1 from './page1'; 
 
-class AuthService{
-    canActivate(router){
-      console.log('canActivate:',router);
-      return new Promise(accept=>accept(true));
-    }
-    canDeactivate(com, router){
-      
-      return com.canDeactivate();
-    }
+function getData(routeParams){
+  console.log(routeParams);
+    return new Promise(accept=>{
+        setTimeout(()=>{
+          accept((new Array(+routeParams.times))
+                .fill('fruit-')
+                .map((fruit,i)=>fruit+i)
+            )
+        }, 1000);
+    })
 }
 
-const routes:IRoute[]=[
-  {path:'/counter', cacheUpdate_perStateChange:true, cacheStrategy:'local', cache:true, component:counterCom, canActivate:AuthService},
-  {path:'/counterList/:times/:msg', cache:true, canDeactivate:AuthService, canActivate:AuthService,  loadComponent:()=>System.import('./counterList')},
-  {path:'/todos', cache:true, canActivate:AuthService, loadComponent:()=>System.import('./todos/todos')}, 
-  {path:'/animation', loadComponent:()=>System.import('./Animation')}, 
-  {path:'/orderAnimation',loadComponent:()=>System.import('./OrderAnimation')},
-  {path:'/heroAnimation', loadComponent:()=>System.import('./Hero')},
-  {path:'/treeView', cache:true, cacheStrategy:'local', loadComponent:()=>System.import('./treeview')}
+class AuthService{
+  canActivate(router){ 
+    //return new Promise(accept=>accept(true));
+    return confirm('are your 18+ ?')  
+  }
+  canDeactivate(component, router){ 
+    //return component.canDeactivate();
+    return confirm('Do you realy want to leave ?')
+  }
+}
+
+
+const routes:RouteOptions[]=[
+  {path:"page1", component:page1},
+  {path:"page2", canActivate:AuthService, loadComponent:()=>System.import('./page2')},
+  {path:"page3/:times/:title", data:getData, loadComponent:()=>System.import('./page3')},
+  {path:"counter", cache:true, loadEffects:[()=>System.import('./counterEffect')], loadComponent:()=>System.import('./counter')},
+  {path:"parent", canDeactivate:AuthService, loadEffects:[()=>System.import('./counterEffect')],  loadComponent:()=>System.import('./parent')}
 ];
-
-bootstrap({
-  containerDom:'#app',
-  mainComponent:rootCom, 
-  //locationStrategy:'history', 
-  routes:routes,
-  activePath:'/counter',
-  devTool:devTool,
-  cacheStrategy:'default'
-});
-
+  
+  bootstrap({
+      containerDom:'#app',
+      mainComponent:rootCom,  
+      routes:routes,
+      activePath:'page1',
+      devTool:true
+    });
