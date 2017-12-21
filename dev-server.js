@@ -5,11 +5,11 @@ var path = require('path');
 
 var compiler = webpack(config);
 var server = new WebpackDevServer(compiler, {
-	hot: true,
-	filename: config.output.filename,
-	publicPath: config.output.publicPath,
-	stats: {
-		colors: true
-	}
+    hot: true,
+    filename: config.output.filename,
+    publicPath: config.output.publicPath,
+    stats: {
+        colors: true
+    }
 });
 server.listen(8080, 'localhost', function() {});
