@@ -46,7 +46,7 @@ function view({ model, dispatch, router }) {
             router.viewChild({
                 model: model.child,
                 router,
-                dispatch: action => dispatch({ type: CHILD, payload: action })
+                dispatch: action => dispatch({ type: CHILD, childAction: action })
             })
         )
     ]);
@@ -57,7 +57,7 @@ function update(model, action, router) {
         case CHILD:
             return {
                 ...model,
-                child: router.updateChild(model.child, action.payload)
+                child: router.updateChild(model.child, action.childAction)
             };
         case INC_AT:
             return { ...model, incAt: action.payload };
