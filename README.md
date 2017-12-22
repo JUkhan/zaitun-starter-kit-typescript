@@ -524,14 +524,14 @@ function view({ model, dispatch, router }) {
     return h('div', [
         topMenu(model.menu, router),  
         h('h3','Root Component'),     
-        h('div', router.viewChild({ model: model.child, router, dispatch: action => dispatch({ type: CHILD, payload: action }) }))
+        h('div', router.viewChild({ model: model.child, router, dispatch: action => dispatch({ type: CHILD, childAction: action }) }))
     ])
 }
 
 function update(model, action, router) {
 
     switch (action.type) {
-        case CHILD: return { ...model,  child: router.updateChild(model.child, action.payload) };       
+        case CHILD: return { ...model,  child: router.updateChild(model.child, action.childAction) };       
         default:return model;
     }
 }
@@ -776,14 +776,14 @@ function view({ model, dispatch, router }) {
         h('h3','Root Component'), 
          h('div', model.incAt?'Last incremented at: '+model.incAt:''),
         h('div', model.decAt?'Last decremented at: '+model.decAt:''),    
-        h('div', router.viewChild({ model: model.child, router, dispatch: action => dispatch({ type: CHILD, payload: action }) }))
+        h('div', router.viewChild({ model: model.child, router, dispatch: action => dispatch({ type: CHILD, childAction: action }) }))
     ])
 }
 
 function update(model, action, router) {
 
     switch (action.type) {
-        case CHILD: return { ...model,  child: router.updateChild(model.child, action.payload) };  
+        case CHILD: return { ...model,  child: router.updateChild(model.child, action.childAction) };  
         case INC_AT: return {...model, incAt:action.payload}
         case DEC_AT: return {...model, decAt:action.payload}     
         default:return model;
