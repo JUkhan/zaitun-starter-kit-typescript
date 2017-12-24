@@ -1,8 +1,5 @@
 import { h, Action, Router } from 'zaitun';
 
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/map';
-
 const INCREMENT = 'inc';
 const DECREMENT = 'dec';
 const LAZY = 'lazy';
@@ -10,8 +7,6 @@ const LAZY = 'lazy';
 function init() {
     return { count: 0, msg: '' };
 }
-
-function afterViewRender(dispatch: Function, router: Router, model: any) {}
 
 function view({ model, dispatch }: any) {
     return h('span', [
@@ -48,7 +43,6 @@ function update(model: any, action: Action) {
 export default {
     init,
     view,
-    update,
-    afterViewRender,
+    update,    
     actions: { INCREMENT, DECREMENT, LAZY }
 };
