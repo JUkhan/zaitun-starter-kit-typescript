@@ -70,13 +70,13 @@ function update(model, action, router) {
 
 function topMenu(model, router) {
     return h(
-        'nav.navbar.navbar-toggleable-md.navbar-inverse.fixed-top.bg-inverse',
-        [
-            h('a.navbar-brand', { props: { href: '#/counter' } }, 'Zaitun'),
+        'nav',
+        [           
             h(
-                'div.collapse.navbar-collapse#navbarCollapse',
+                'div.nav-wrapper',[
+                h('a.brand-logo.center', { props: { href: '#/counter' } }, 'Zaitun'),
                 h(
-                    'ul.navbar-nav.mr-auto',
+                    'ul.left.hide-on-med-and-down',
                     model.map(nav =>
                         h(
                             'li.nav-item',
@@ -96,7 +96,7 @@ function topMenu(model, router) {
                         )
                     )
                 )
-            )
+                ])
         ]
     );
 }

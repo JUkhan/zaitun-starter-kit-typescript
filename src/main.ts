@@ -61,3 +61,4 @@ bootstrap({
     activePath: 'page1',
     devTool: true
 });
+
