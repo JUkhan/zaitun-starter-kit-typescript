@@ -1,6 +1,6 @@
-import { Router, h } from 'zaitun';
+import { Router, h, ViewObj, Dispatch } from 'zaitun';
 
-function init(dispatch, routeParams, router: Router) {
+function init(dispatch:Dispatch, routeParams, router: Router) {
     console.log(router.activeRoute);
     return {
         title: routeParams.title,
@@ -8,7 +8,7 @@ function init(dispatch, routeParams, router: Router) {
     };
 }
 
-function view({ model, dispatch, router }) {
+function view({ model, dispatch, router }:ViewObj) {
     return h('div', [
         h('div', model.title),
         h('ol', model.data.map(fruit => h('li', fruit)))

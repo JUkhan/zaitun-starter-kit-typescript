@@ -1,4 +1,4 @@
-import { h, Action, Router } from 'zaitun';
+import { h, Action, ViewObj} from 'zaitun';
 
 const INCREMENT = 'inc';
 const DECREMENT = 'dec';
@@ -8,7 +8,7 @@ function init() {
     return { count: 0, msg: '' };
 }
 
-function view({ model, dispatch }: any) {
+function view({ model, dispatch }: ViewObj) {
     return h('span', [
         h(
             'button',

@@ -1,4 +1,4 @@
-import { Router, h } from 'zaitun';
+import { Router, h, ViewObj, Dispatch, Action } from 'zaitun';
 import 'rxjs/add/operator/mergeMap';
 import { empty } from 'rxjs/observable/empty';
 import counter from './counter';
@@ -20,22 +20,22 @@ function init() {
         ]
     };
 }
-function afterChildRender(dispatch, router: Router) {
+function afterChildRender(dispatch:Dispatch, router: Router) {
     router.effect$
         .addEffect(eff =>
             eff.whenAction(counter.actions.INCREMENT).mergeMap(action => {
-                dispatch({ type: INC_AT, payload: new Date() });
+                dispatch({ type: INC_AT, payload: new Date().toUTCString() });
                 return empty();
             })
         )
         .addEffect(eff =>
             eff.whenAction(counter.actions.DECREMENT).mergeMap(action => {
-                dispatch({ type: DEC_AT, payload: new Date() });
+                dispatch({ type: DEC_AT, payload: new Date().toUTCString() });
                 return empty();
             })
         );
 }
-function view({ model, dispatch, router }) {
+function view({ model, dispatch, router }:ViewObj) {
     return h('div', [
         topMenu(model.menu, router),
         h('h3', 'Root Component'),
@@ -46,18 +46,18 @@ function view({ model, dispatch, router }) {
             router.viewChild({
                 model: model.child,
                 router,
-                dispatch: action => dispatch({ type: CHILD, childAction: action })
+                dispatch: action => dispatch({ type: CHILD, payload: action })
             })
         )
     ]);
 }
 
-function update(model, action, router) {
+function update(model, action:Action, router:Router) {
     switch (action.type) {
         case CHILD:
             return {
                 ...model,
-                child: router.updateChild(model.child, action.childAction)
+                child: router.updateChild(model.child, action.payload)
             };
         case INC_AT:
             return { ...model, incAt: action.payload };
@@ -74,7 +74,7 @@ function topMenu(model, router) {
         [           
             h(
                 'div.nav-wrapper',[
-                h('a.brand-logo.center', { props: { href: '#/counter' } }, 'Zaitun'),
+                h('a.brand-logo.right', { props: { href: '#/counter' } }, 'Zaitun'),
                 h(
                     'ul.left.hide-on-med-and-down',
                     model.map(nav =>

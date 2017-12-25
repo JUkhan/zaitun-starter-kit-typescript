@@ -23,7 +23,7 @@
   "dependencies": {
     "materialize-css": "^0.100.2",
     "snabbdom-jsx": "^0.4.2",
-    "zaitun": "^1.6.6"
+    "zaitun": "^1.6.7"
   },
   "devDependencies": {
     "@types/webpack-env": "^1.13.0",

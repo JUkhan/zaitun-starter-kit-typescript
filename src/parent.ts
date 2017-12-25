@@ -1,4 +1,4 @@
-import { Router, h, Action } from 'zaitun';
+import { h, Action, ViewObj } from 'zaitun';
 import Counter from './counter';
 
 const COUNTER_UPDATE = 'counterUpdate';
@@ -9,7 +9,7 @@ function init() {
     return { counter: Counter.init(), incAt: null, decAt: null };
 }
 
-function view({ model, dispatch, router }) {
+function view({ model, dispatch, router }:ViewObj) {
     return h('div', [
         h('h3', 'Parent Component'),
         h('div', model.incAt ? 'Last incremented at: ' + model.incAt : ''),

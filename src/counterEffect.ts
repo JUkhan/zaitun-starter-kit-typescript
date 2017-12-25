@@ -1,14 +1,14 @@
-import { Router, EffectSubscription } from 'zaitun';
+import { EffectSubscription } from 'zaitun';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
-import { empty } from 'rxjs/observable/empty';
+
 
 import counter from './counter';
-import parent from './parent';
+
 
 export class CounterEffect {
-    constructor(es: EffectSubscription, router: Router) {
+    constructor(es: EffectSubscription) {
         es.addEffect(effect$ =>
             effect$
                 .whenAction(counter.actions.LAZY)
