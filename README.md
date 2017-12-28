@@ -7,6 +7,7 @@ Zaitun uses [Elm Architecture](https://guide.elm-lang.org/architecture/) for com
 ```sh
 git clone https://github.com/JUkhan/zaitun-starter-kit-typescript.git quickstart
 cd quickstart
+npm install
 npm start
 npm run build:prod
 Browse http://localhost:8080
