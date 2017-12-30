@@ -35,7 +35,7 @@ function update(model: any, action: Action) {
         case DECREMENT:
             return { count: model.count - 1, msg: '' };
         case LAZY:
-            return { ...model, msg: 'loaading...' };
+            return { ...model, msg: 'loading...' };
         default:
             return model;
     }

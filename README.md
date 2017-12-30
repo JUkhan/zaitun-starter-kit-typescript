@@ -11,6 +11,10 @@ npm install
 npm start
 npm run build:prod
 Browse http://localhost:8080
+
+ 
+npm run compile:test
+npm run test
 ```
 
 ## The Basic Pattern
