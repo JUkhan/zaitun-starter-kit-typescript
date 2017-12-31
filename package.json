@@ -6,10 +6,10 @@
     "format": "prettier --tab-width 4 --single-quote --write './**/*.{js,jsx,ts,tsx}'",
     "start": "webpack-dev-server --config=dev.webpack.config.js",
     "build": "rimraf dist && webpack --config=dev.webpack.config.js",
-    "build:prod": "rimraf dist && webpack -p --config=prod.webpack.config.js",   
-    "compile:test": "webpack",
-    "compile:test:watch": "webpack -w",
-    "test": "testem"   
+    "build:prod": "rimraf dist && webpack -p --config=prod.webpack.config.js",
+    "tcompile": "webpack --config=test.webpack.config.js",
+    "compile:test:watch": "webpack -w --config=test.webpack.config.js",
+    "test": "npm run tcompile && testem"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
     "@types/chai": "^4.0.10",
     "@types/mocha": "^2.2.45",
     "@types/webpack-env": "^1.13.0",
-    "awesome-typescript-loader": "^3.2.1",    
+    "awesome-typescript-loader": "^3.2.1",
     "chai": "^4.1.2",
     "css-loader": "^0.28.7",
     "extract-text-webpack-plugin": "^3.0.0",
@@ -46,7 +46,7 @@
     "testem": "^1.18.4",
     "tsify": "^3.0.4",
     "typescript": "^2.4.2",
-    "url-loader": "^0.6.2",   
+    "url-loader": "^0.6.2",
     "webpack": "^3.3.0",
     "webpack-dev-server": "^2.6.0",
     "webpack-merge": "^4.1.1"
