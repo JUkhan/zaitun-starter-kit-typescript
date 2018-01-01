@@ -13,7 +13,7 @@ function getData(routeParams: any) {
     return new Promise(accept => {
         setTimeout(() => {
             accept(
-                new Array(+routeParams.times)
+                new Array(routeParams.times)
                     .fill('fruit-')
                     .map((fruit, i) => fruit + i)
             );
@@ -24,7 +24,7 @@ function getData(routeParams: any) {
 const routes: RouteOptions[] = [
     { path: 'page1', component: page1 },
     {
-        path: 'page2',       
+       path: 'page2',       
        component:page2
     },
     {
@@ -33,9 +33,7 @@ const routes: RouteOptions[] = [
         component:page3
     },
     {
-        path: 'counter',
-        cache: true,
-        cacheStrategy:'local',
+        path: 'counter',               
         effects: [counterEffect],
         component:counter
     },
@@ -52,8 +50,10 @@ var run=(navName)=>{
         mainComponent: rootCom,
         routes: routes,
         activePath: navName,
-        devTool: false,
-        cacheStrategy:'session'
+        hashOrHistoryOptions:{
+            hashType:'slash'
+        },
+        devTool: false
     });
 }
 

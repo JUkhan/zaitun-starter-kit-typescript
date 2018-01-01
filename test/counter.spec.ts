@@ -55,15 +55,15 @@ describe('counter test',()=>{
     })
 
     it('lazy increment effect(registered in rootComponent and CounterEffect service)', (done)=>{
-        const model=router.getAppState();
-        router.test().whenAction({type:counter.actions.LAZY}, res=>{
-           
+        let model=router.getAppState();
+        
+        router.test().whenAction({type:counter.actions.LAZY}, res=>{          
             if(res.action.payload.type===counter.actions.LAZY){
                 assert.equal(res.model.child.msg,'loading...');  
             }
             else if(res.action.payload.type===counter.actions.INCREMENT){
                 assert.equal(model.child.count+1,res.model.child.count); 
-            }
+            }           
             else if(res.action.type==='incAt'){
                 assert.notEqual(model.incAt,res.model.incAt);
                 done(); 
