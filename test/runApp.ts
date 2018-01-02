@@ -17,7 +17,7 @@ function getData(routeParams: any) {
                     .fill('fruit-')
                     .map((fruit, i) => fruit + i)
             );
-        }, 100);
+        }, 1000);
     });
 }
 
@@ -50,11 +50,9 @@ var run=(navName)=>{
         mainComponent: rootCom,
         routes: routes,
         activePath: navName,
-        hashOrHistoryOptions:{
-            hashType:'slash'
-        },
+        locationStrategy:'memory',
         devTool: false
-    });
+    }).test();
 }
 
 export default run;

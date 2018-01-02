@@ -1,6 +1,6 @@
 
 import {assert} from 'chai';
-import {Router} from 'zaitun';
+import {Router, TestResult} from 'zaitun';
 import counter from '../src/counter';
 import navigate from './runApp';
 
@@ -8,7 +8,7 @@ describe('counter test',()=>{
     const router:Router=navigate('counter');    
     it('increment', ()=>{
         const model=router.getAppState().child;
-        router.test().whenAction({type:counter.actions.INCREMENT}, res=>{
+        router.whenAction({type:counter.actions.INCREMENT}, (res:TestResult)=>{
             assert.equal(model.count+1,res.model.child.count);            
         })
        
@@ -16,7 +16,7 @@ describe('counter test',()=>{
 
     it('decrement', ()=>{
         const model=router.getAppState().child;
-        router.test().whenAction({type:counter.actions.DECREMENT}, res=>{
+        router.whenAction({type:counter.actions.DECREMENT}, (res:TestResult)=>{
             assert.equal(model.count-1,res.model.child.count);            
         })
        
@@ -24,7 +24,7 @@ describe('counter test',()=>{
 
     it('increment effect(registered in rootComponent)', (done)=>{
         const model=router.getAppState();
-        router.test().whenAction({type:counter.actions.INCREMENT}, res=>{
+        router.whenAction({type:counter.actions.INCREMENT}, (res:TestResult)=>{
             
             if(res.action.payload.type===counter.actions.INCREMENT){
                 assert.equal(model.child.count+1,res.model.child.count); 
@@ -40,7 +40,7 @@ describe('counter test',()=>{
 
     it('decrement effect(registered in rootComponent)', (done)=>{
         const model=router.getAppState();
-        router.test().whenAction({type:counter.actions.DECREMENT}, res=>{
+        router.whenAction({type:counter.actions.DECREMENT}, (res:TestResult)=>{
             
             if(res.action.payload.type===counter.actions.DECREMENT){
                 assert.equal(model.child.count-1,res.model.child.count); 
@@ -57,7 +57,7 @@ describe('counter test',()=>{
     it('lazy increment effect(registered in rootComponent and CounterEffect service)', (done)=>{
         let model=router.getAppState();
         
-        router.test().whenAction({type:counter.actions.LAZY}, res=>{          
+        router.whenAction({type:counter.actions.LAZY}, (res:TestResult)=>{          
             if(res.action.payload.type===counter.actions.LAZY){
                 assert.equal(res.model.child.msg,'loading...');  
             }

@@ -26,7 +26,7 @@
   "dependencies": {
     "materialize-css": "^0.100.2",
     "snabbdom-jsx": "^0.4.2",
-    "zaitun": "^1.6.9"
+    "zaitun": "^1.6.10"
   },
   "devDependencies": {
     "@types/chai": "^4.0.10",

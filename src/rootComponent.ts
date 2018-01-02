@@ -74,7 +74,7 @@ function topMenu(model, router) {
         [           
             h(
                 'div.nav-wrapper',[
-                h('a.brand-logo.right', { props: { href: '#/counter' } }, 'Zaitun'),
+                h('a.brand-logo.right', { props: { href: '/counter' } }, 'Zaitun'),
                 h(
                     'ul.left.hide-on-med-and-down',
                     model.map(nav =>
@@ -89,7 +89,7 @@ function topMenu(model, router) {
                             [
                                 h(
                                     'a.nav-link',
-                                    { props: { href: '#/' + nav.path } },
+                                    { props: { href:  nav.path } },
                                     nav.text
                                 )
                             ]

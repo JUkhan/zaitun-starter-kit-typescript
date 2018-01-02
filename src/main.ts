@@ -56,7 +56,7 @@ const routes: RouteOptions[] = [
 
 bootstrap({
     containerDom: '#app',
-    mainComponent: rootCom,
+    mainComponent: rootCom,    
     routes: routes,
     activePath: 'page1',
     devTool: true,
