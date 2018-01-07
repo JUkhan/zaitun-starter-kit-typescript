@@ -54,7 +54,7 @@ function view({ model, dispatch }: ViewObj) {
 function update(model, action: Action) {
     switch (action.type) {
         case SEARCH: return { ...model, search: action.payload }
-        case SEARCH_RESULT: return { ...model, data: action.payload, msg: '' }
+        case SEARCH_RESULT: return { ...model, data: action.payload }
         default: return model;
     }
 }
