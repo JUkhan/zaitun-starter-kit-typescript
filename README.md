@@ -73,14 +73,14 @@ function view({ model, dispatch }:ViewObj) {
     return h('span', [
         h('button', { on: { click: e => dispatch({ type: INCREMENT }) } }, '+'),       
         h('button', { on: { click: e => dispatch({ type: DECREMENT }) } }, '-'),
-        h('span', model.msg || model.count)
+        h('span', model.count)
     ]);
 }
 function update(model: any, action: Action) {
 
     switch (action.type) {
-        case INCREMENT: return { count: model.count + 1, msg: ''};
-        case DECREMENT: return { count: model.count - 1, msg: ''};            
+        case INCREMENT: return { count: model.count + 1};
+        case DECREMENT: return { count: model.count - 1};            
         default:return model;
     }
 }
