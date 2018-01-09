@@ -69,36 +69,18 @@ function update(model, action:Action, router:Router) {
 }
 
 function topMenu(model, router) {
-    return h(
-        'nav',
-        [           
-            h(
-                'div.nav-wrapper',[
-                h('a.brand-logo.right', { props: { href: '/counter' } }, 'Zaitun'),
-                h(
-                    'ul.left.hide-on-med-and-down',
-                    model.map(nav =>
-                        h(
-                            'li.nav-item',
-                            {
-                                class: {
-                                    active:
-                                        router.activeRoute.navPath === nav.path
-                                }
+    return h('nav.navbar.navbar-expand-sm.bg-dark navbar-dark',
+        [ 
+            h('a.navbar-brand', { props: { href: '/counter' } }, 'Zaitun'),
+            h('ul.navbar-nav',model.map(nav =>h('li.nav-item',{
+                                class: {active:router.activeRoute.navPath === nav.path }
                             },
-                            [
-                                h(
-                                    'a.nav-link',
-                                    { props: { href:  nav.path } },
-                                    nav.text
-                                )
-                            ]
+                            h('a.nav-link',{ props: { href:  nav.path } }, nav.text )                            
                         )
                     )
                 )
-                ])
-        ]
-    );
+        ]);       
+
 }
 
 export default { init, view, update, afterChildRender };

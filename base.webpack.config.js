@@ -14,14 +14,14 @@ module.exports = {
   entry: {
     app: './main.ts',
     appStyles: ['./content/devTool.scss', './content/styles.scss'],
-    vendor: [
-      //'jquery',
-      'materialize-css',
-    ],
-    vendorStyles: [
+    //vendor: [
+      //'jquery',      
+      //'materialize-css',
+    //],
+    //vendorStyles: [
       //'../node_modules/bootstrap/dist/css/bootstrap.css',
-      '../node_modules/materialize-css/dist/css/materialize.css',
-    ],
+      //'../node_modules/materialize-css/dist/css/materialize.css',
+    //],
   },
   module: {
     loaders: [

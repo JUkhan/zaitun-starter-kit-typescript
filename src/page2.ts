@@ -36,10 +36,13 @@ function afterViewRender(dispatch, router: Router) {
 function view({ model, dispatch }: ViewObj) { 
     var res=[];
     if(model.data){
-        res.push(h('h3', model.data[0]));
-        res.push(h('ol', model.data[1].map(_=>h('li', _))));
-        res.push(h('ol', model.data[2].map(_=>h('li', _))));
-        res.push(h('ol', model.data[3].map(_=>h('li', h('a',{props:{href:_}},_)))));
+        res.push(h('div.card',h('div.card-body',[
+            h('h4.card-title',model.data[0]),
+            h('ul.list-group', model.data[1].map(_=>h('li.list-group-item.list-group-item-success', _))),
+            h('ul.list-group', model.data[2].map(_=>h('li.list-group-item.list-group-item-info', _))),
+            h('div.list-group', model.data[3].map(_=>h('a.list-group-item.list-group-item-action',{props:{href:_}},_)))
+        ])));
+        
     }  
     return h('div', [
         h('input', {
@@ -47,7 +50,7 @@ function view({ model, dispatch }: ViewObj) {
              on: { input: (ev: any) => dispatch({ type: SEARCH, payload: ev.target.value }, true) }
              }
         ),
-        h('div', h('div',res))
+        h('div', res)
     ]);
 }
 

@@ -16,7 +16,7 @@ module.exports = webpackMerge.strategy({
     filename: '[name].js',
   },
   devServer: {
-    port: 8080,
+    port: 8484,
     hot: false,
   },
   plugins: [
