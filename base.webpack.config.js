@@ -13,7 +13,7 @@ module.exports = {
   },
   entry: {
     app: './main.ts',
-    appStyles: ['./content/devTool.scss', './content/styles.scss'],
+    appStyles: ['./content/devTool.scss', './content/styles.scss','./content/ui.scss'],
     //vendor: [
       //'jquery',      
       //'materialize-css',

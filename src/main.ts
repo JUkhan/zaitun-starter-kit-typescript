@@ -51,6 +51,11 @@ const routes: RouteOptions[] = [
         canDeactivate: AuthService,
         loadEffects: [() => System.import('./counterEffect')],
         loadComponent: () => System.import('./parent')
+    },
+    {
+        path: 'form',
+        loadEffects: [() => System.import('./counterEffect')],
+        loadComponent: () => System.import('./formExample')
     }
 ];
 
