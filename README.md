@@ -135,7 +135,7 @@ We can explain this in a short way like bellow:
 ## Note
 The view/update are both pure functions, they have no dependency on any external environment besides their input. The counter component itself doesn’t hold any state or variable, it just describes how to construct a view from a given state, and how to update a given state with a given action. Thanks to its purity, the counter component can be easily plugged into any environment that is able to supply it with its dependencies : a state  and an action.
 
-## Adding side effects against a dispatched action
+## Adding side effects to the dispatched actions
 
 There are several of ways to integrate effects in our application. One of them is to add effects into the `afterViewRender` life cycle hook method
 
