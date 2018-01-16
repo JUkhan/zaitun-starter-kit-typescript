@@ -1,5 +1,5 @@
 
-import { ViewObj, Action, Router} from 'zaitun';
+import { ViewObj, Action, Router } from 'zaitun';
 //import { html } from 'snabbdom-jsx';
 import { FormOptions } from './ui/uimodel';
 import { juForm, TAB_CLICK, FORM_VALUE_CHANGED } from './ui/juForm'
@@ -19,14 +19,14 @@ function init() {
 
     }
 }
-function onCache(model:any){    
-   model.form1.options=init().form1.options;
-   return model;
+function onCache(model: any) {
+    model.form1.options = init().form1.options;
+    return model;
 }
 function view({ model, dispatch, router }: ViewObj) {
     return myForm.view({ model: model.form1, dispatch, router });
-   
-//return h('a', {attrs: {href: '/counter', for:'asd', minlength: 1, selected: true, disabled: false}},'HELLO LINK');
+
+    //return h('a', {attrs: {href: '/counter', for:'asd', minlength: 1, selected: true, disabled: false}},'HELLO LINK');
 }
 
 
@@ -68,7 +68,7 @@ function getFormOptions(): FormOptions {
             },
             [{
                 field: 'name', autofocus: true,
-                required: true,
+                required: true, invalidFeedback:'must enter your name',
                 label: 'Adress',
                 type: 'text', size: 3, info: 'zaitun is awesome'
             },
@@ -81,40 +81,47 @@ function getFormOptions(): FormOptions {
                 type: 'date',
                 size: 3
             }],
-            {type:'file', field:'dataFile', label:'Select file', required:true},
             {
-                type:'radio',
-                inline:!false,
-                required:true, size:6,
-                name:'mata',
-                label:'Select',
-                field: 'asd', 
-                radioList:[
-                    {                        
-                        value:'leave',
+                type: 'file',
+                field: 'dataFile',
+                invalidFeedback: '.jpg & .jpeg files are only allowed',
+                fileExt: ['.jpg', '.jpeg'],
+                label: 'Select file',
+                required: true
+            },
+            {
+                type: 'radio',
+                inline: !false,
+                required: true, size: 6,
+                name: 'mata',
+                label: 'Select',
+                field: 'asd',
+                radioList: [
+                    {
+                        value: 'leave',
                         label: 'I want to leave',
                         type: 'radio', size: 3, info: 'zaitun is awesome'
                     },
-                    {                     
-                        value:'continue', 
+                    {
+                        value: 'continue',
                         label: 'Do you want to continue',
                         type: 'radio', size: 3, info: 'zaitun is awesome'
                     },
                 ]
             },
             {
-               
-                field: 'f1', 
+
+                field: 'f1',
                 required: true,
-                value:'leave',
+                value: 'leave',
                 label: 'I want to leave',
                 type: 'checkbox', size: 3, info: 'zaitun is awesome'
             },
             {
-               
+
                 field: 'f2',
                 required: true,
-                value:'continue',
+                value: 'continue',
                 label: 'Do you want to continue',
                 type: 'checkbox', size: 3, info: 'zaitun is awesome'
             },
@@ -134,7 +141,7 @@ function getFormOptions(): FormOptions {
                 field: 'gender2', required: true,
                 type: 'select', invalidFeedback: 'This field is mandatory',
                 label: 'Gender', elmSize: 'sm', multiSelect: true,
-                info: 'Slect the for test!',props:{size:10},
+                info: 'Slect the for test!', props: { size: 10 },
                 data: [
                     {
                         text: 'Group1', options: [
@@ -159,7 +166,7 @@ function getFormOptions(): FormOptions {
                 tabs: {
                     'Test Tab': {
                         inputs: [
-                            { field: 'age',  type: 'number', label: 'Age' }
+                            { field: 'age', type: 'number', label: 'Age' }
                             , { field: 'counter', type: 'component', actionType: COUNTER_UPDATE, component: Counter }
                         ]
                     },

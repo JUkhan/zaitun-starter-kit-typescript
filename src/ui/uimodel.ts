@@ -1,6 +1,6 @@
 import {VNode} from 'zaitun/dom';
 
-declare type elmFn=(model:any)=>VNode;
+export declare type elmFn=(model:any)=>VNode;
 
 export interface FormModel{
     data:{[key:string]:any};
@@ -60,7 +60,8 @@ export interface Field{
     isValid?:boolean;
     selectTitle?:string; 
     autofocus?:boolean; 
-    filePlaceholder?:string             
+    filePlaceholder?:string;
+    fileExt?:string[];             
 }
 
 export interface Tab{
