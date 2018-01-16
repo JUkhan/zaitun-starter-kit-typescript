@@ -1,4 +1,4 @@
-import { h, Dispatch, Router } from 'zaitun';
+import { Dispatch, Router, h} from 'zaitun';
 import { guid } from './utils';
 import { FormOptions, Field } from './uimodel'
 

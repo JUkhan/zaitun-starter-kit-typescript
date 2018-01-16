@@ -8,6 +8,7 @@ const COUNTER_UPDATE = 'counterUpdate';
 const myForm = new juForm();
 import { empty } from 'rxjs/observable/empty';
 import 'rxjs/add/operator/mergeMap';
+
 //var form = document.getElementById("form-validation");
 
 // if (form.checkValidity() == false) 
@@ -18,7 +19,10 @@ function init() {
 
     }
 }
-
+function onCache(model:any){    
+   model.form1.options=init().form1.options;
+   return model;
+}
 function view({ model, dispatch, router }: ViewObj) {
     return myForm.view({ model: model.form1, dispatch, router });
    
@@ -56,7 +60,6 @@ function getFormOptions(): FormOptions {
         labelSize: 2,
         labelPos: 'left',
         title: 'Form Title',
-
         inputs: [
             {
                 type: 'button',
@@ -177,4 +180,4 @@ function getFormOptions(): FormOptions {
 
     };
 }
-export default { init, view, update, afterViewRender }
+export default { init, view, update, afterViewRender, onCache }

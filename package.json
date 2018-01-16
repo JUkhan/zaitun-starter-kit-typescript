@@ -25,7 +25,7 @@
   "license": "Apache-2.0",
   "dependencies": {    
     "snabbdom-jsx": "^0.4.2",
-    "zaitun": "^1.6.10"
+    "zaitun": "^1.6.11"
   },
   "devDependencies": {
     "@types/chai": "^4.0.10",

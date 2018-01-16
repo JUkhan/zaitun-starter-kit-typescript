@@ -1,4 +1,5 @@
-import { Router, h, ViewObj, Dispatch } from 'zaitun';
+import { Router, ViewObj, Dispatch } from 'zaitun';
+import {div, ol, li} from 'zaitun/dom';
 
 function init(dispatch:Dispatch, routeParams, router: Router) {
     console.log(router.activeRoute);
@@ -9,9 +10,9 @@ function init(dispatch:Dispatch, routeParams, router: Router) {
 }
 
 function view({ model, dispatch, router }:ViewObj) {
-    return h('div', [
-        h('div', model.title),
-        h('ol', model.data.map(fruit => h('li', fruit)))
+    return div([
+        div(model.title),
+        ol( model.data.map(fruit => li(fruit)))
     ]);
 }
 

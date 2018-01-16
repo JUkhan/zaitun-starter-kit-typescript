@@ -1,4 +1,6 @@
-import { Router, h, ViewObj, Dispatch, Action } from 'zaitun';
+import { Router, ViewObj, Dispatch, Action } from 'zaitun';
+import {div, h3, nav, a, ul, li} from 'zaitun/dom';
+
 import 'rxjs/add/operator/mergeMap';
 import { empty } from 'rxjs/observable/empty';
 import counter from './counter';
@@ -25,25 +27,24 @@ function afterChildRender(dispatch:Dispatch, router: Router) {
     router.effect$
         .addEffect(eff =>
             eff.whenAction(counter.actions.INCREMENT).mergeMap(action => {
-                dispatch({ type: INC_AT, payload: new Date().toUTCString() });
+                dispatch({ type: INC_AT, payload: new Date().toString() });
                 return empty();
             })
         )
         .addEffect(eff =>
             eff.whenAction(counter.actions.DECREMENT).mergeMap(action => {
-                dispatch({ type: DEC_AT, payload: new Date().toUTCString() });
+                dispatch({ type: DEC_AT, payload: new Date().toString() });
                 return empty();
             })
         );
 }
 function view({ model, dispatch, router }:ViewObj) {
-    return h('div', [
+    return div( [
         topMenu(model.menu, router),
-        h('h3', 'Root Component'),
-        h('div', model.incAt ? 'Last incremented at: ' + model.incAt : ''),
-        h('div', model.decAt ? 'Last decremented at: ' + model.decAt : ''),
-        h(
-            'div',
+        h3( 'Root Component'),
+        div(model.incAt ? 'Last incremented at: ' + model.incAt : ''),
+        div( model.decAt ? 'Last decremented at: ' + model.decAt : ''),
+        div(
             router.viewChild({
                 model: model.child,
                 router,
@@ -70,13 +71,13 @@ function update(model, action:Action, router:Router) {
 }
 
 function topMenu(model, router) {
-    return h('nav.navbar.navbar-expand-sm.bg-dark navbar-dark',
+    return nav('.navbar.navbar-expand-sm.bg-dark navbar-dark',
         [ 
-            h('a.navbar-brand', { props: { href: '/counter' } }, 'Zaitun'),
-            h('ul.navbar-nav',model.map(nav =>h('li.nav-item',{
+            a('.navbar-brand', { props: { href: '/counter' } }, 'Zaitun'),
+            ul('.navbar-nav',model.map(nav =>li('.nav-item',{
                                 class: {active:router.activeRoute.navPath === nav.path }
                             },
-                            h('a.nav-link',{ props: { href:  nav.path } }, nav.text )                            
+                            a('.nav-link',{ props: { href:  nav.path } }, nav.text )                            
                         )
                     )
                 )

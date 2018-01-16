@@ -1,3 +1,6 @@
+import {VNode} from 'zaitun/dom';
+
+declare type elmFn=(model:any)=>VNode;
 
 export interface FormModel{
     data:{[key:string]:any};
@@ -13,7 +16,7 @@ export interface FormOptions{
     title?:string;
     inputs:Array<Field|Array<Field>>;
     modalClose?:Function;
-    buttons?:Array<Field>|Function;
+    buttons?:Array<Field>|elmFn;
     /** popup size */
     modalSize?:'sm'|'lg';
 }
@@ -30,7 +33,7 @@ export interface Field{
     data?:Array<any>;
     activeTab?:string;    
     tabClick?:(tabName:string, preTab:string)=>boolean|Promise<boolean>;
-    vnode?:Function|any;  
+    vnode?:(model:any)=>VNode;  
     actionType?:string;
     component?:any;
     tabs?:{[key:string]:Tab};
@@ -48,7 +51,7 @@ export interface Field{
     multiSelect?:boolean; 
     radioList?:Array<Field>; 
     inline?:boolean;
-    footer?:Function|Array<Field>;
+    footer?:Field[]|elmFn;
     info?:string;  
     required?:boolean;  
     invalidFeedback?:string; 
@@ -63,5 +66,5 @@ export interface Field{
 export interface Tab{
     disabled?:boolean;
     hide?:boolean;
-    inputs:Array<Field>;    
+    inputs?:Array<Field|Array<Field>>;   
 }
