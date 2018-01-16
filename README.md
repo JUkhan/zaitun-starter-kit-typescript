@@ -950,7 +950,7 @@ You may set the cacheStrategy:'local'|'session'|'default' into the bootstrap con
 
 Caching should not be applied if you set the cache proerty true of the route configuration. Route configuration also has `cacheStrategy` property.
 
-Component should have a `onCache(model:any):model` life cycle hook method that should be fired if the component configuard as cacheable, thats provides convinient way to update the model in your cases.
+Component should have a `onCache(model:any):model` life cycle hook method that should be fired if the component configuard as cacheable, thats provides convinient way to update the cached model in your cases.
 
 ## onDestroy
 
