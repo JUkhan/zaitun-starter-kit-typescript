@@ -1,4 +1,4 @@
-import { Dispatch, Router, h} from 'zaitun';
+import { Dispatch, Router, h } from 'zaitun';
 import { guid } from './utils';
 import { FormOptions, Field } from './uimodel'
 
@@ -212,41 +212,40 @@ class juForm {
         }
         return footer;
     }
-    FILES:{[key:string]:File[]}={};
-    _setFiles(item:Field, e):string {       
+    FILES: { [key: string]: File[] } = {};
+    _setFiles(item: Field, e): string {
         let fileList: FileList = e.target.files;
-        if (fileList.length == 0)
-        {            
+        if (fileList.length == 0) {
             return '';
         }
         let filesName: Array<string> = [];
-        let files:Array<File>=[];
+        let files: Array<File> = [];
         for (var index = 0; index < fileList.length; index++) {
-            if (this._hasValidExt(fileList.item(index).name, item.fileExt)) {                
+            if (this._hasValidExt(fileList.item(index).name, item.fileExt)) {
                 filesName.push(fileList.item(index).name);
                 files.push(fileList.item(index));
             }
         }
-        this.FILES[item.field]=files;         
-        return filesName.join(';');      
+        this.FILES[item.field] = files;
+        return filesName.join(';');
     }
-    _hasValidExt(name: string, ext:string[]) {
+    _hasValidExt(name: string, ext: string[]) {
         if (Array.isArray(ext) && ext.length > 0) {
-            let res=ext.filter(ex=>name.endsWith(ex));
-            return res && res.length>0;
+            let res = ext.filter(ex => name.endsWith(ex));
+            return res && res.length > 0;
         }
         return true;
     }
     _getListener(item: Field) {
         let events = {},
             hasChange = null,
-            modelUpdateEvent ='input';
-            if(item.type === 'checkbox' || item.type === 'radio'){
-                modelUpdateEvent='click';
-            }
-            else if(item.type === 'file' ){
-                modelUpdateEvent='change';
-            } 
+            modelUpdateEvent = 'input';
+        if (item.type === 'checkbox' || item.type === 'radio') {
+            modelUpdateEvent = 'click';
+        }
+        else if (item.type === 'file') {
+            modelUpdateEvent = 'change';
+        }
         if (typeof item.on === 'object') {
             for (let eventName in item.on) {
                 if (eventName === modelUpdateEvent) {
@@ -263,8 +262,8 @@ class juForm {
                     val = '';
                 }
             }
-            else if(item.type === 'file' ){
-               val=this._setFiles(item, e);              
+            else if (item.type === 'file') {
+                val = this._setFiles(item, e);
             }
             console.log(e);
             this._setValueToData(item, val);
@@ -417,8 +416,8 @@ class juForm {
     _bindProps(item) {
         return typeof item.props === 'object' ? item.props : {}
     }
-    _createFileElm(item: Field, value) { 
-        
+    _createFileElm(item: Field, value) {
+
         return h('div.custom-file', {
             on: this._getListener(item),
             style: item.style,
@@ -434,17 +433,17 @@ class juForm {
             }
         },
             [
-               h(`input.custom-file-input.form-control${this._getConCssClass(item)}`,{
-                   attrs:{
-                       id:item.field,
-                       type:'file'
-                   }
-               }),
-               h('label.custom-file-label',{
-                   attrs:{for:item.field}
-                }, value||item.filePlaceholder||'Choose file'),                
+                h(`input.custom-file-input.form-control${this._getConCssClass(item)}`, {
+                    attrs: {
+                        id: item.field,
+                        type: 'file'
+                    }
+                }),
+                h('label.custom-file-label', {
+                    attrs: { for: item.field }
+                }, value || item.filePlaceholder || 'Choose file'),
                 h('div.invalid-feedback', item.invalidFeedback)
-               
+
             ]
         );
     }
@@ -486,7 +485,7 @@ class juForm {
         if (item.info) {
             children.push(h('small.form-text.text-muted', item.info));
         }
-        if (!item.isValid && item.invalidFeedback&&item.type!=='file') {
+        if (!item.isValid && item.invalidFeedback && item.type !== 'file') {
             children.push(h('div.invalid-feedback', item.invalidFeedback));
         }
 
@@ -499,21 +498,16 @@ class juForm {
         childrenWithLabel.push(h(`div.col-md-${item.size || 4}`, children));
         return childrenWithLabel;
     }
-    _applyFieldValidation(item: Field, field_value: any) {
-        if (!item.required) { return true; }
-        let isValid = false;
-        if (item.required && item.type === 'select') {
-            field_value = field_value || '0';
-            return field_value == '0' ? false : true;
+    _applyFieldValidation(field: Field, field_value: any) {
+
+        if (Array.isArray(field.validators) && field.validators.length) {           
+            return field.validators.find(fx => !fx(field_value, field))===undefined;
         }
-        if (item.required && field_value) {
-            return true;
-        }
-        return isValid;
+        return true;
 
     }
-    _getConCssClass(item: Field) {        
-       var css = item.isValid ? '.is-valid' : '.is-invalid';
+    _getConCssClass(item: Field) {
+        var css = item.isValid ? '.is-valid' : '.is-invalid';
         return css;
     }
     _createSelect(item: Field, field_value) {

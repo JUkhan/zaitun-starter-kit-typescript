@@ -8,7 +8,7 @@ const COUNTER_UPDATE = 'counterUpdate';
 const myForm = new juForm();
 import { empty } from 'rxjs/observable/empty';
 import 'rxjs/add/operator/mergeMap';
-
+import {Validators} from './ui/Validators'
 //var form = document.getElementById("form-validation");
 
 // if (form.checkValidity() == false) 
@@ -67,32 +67,42 @@ function getFormOptions(): FormOptions {
                 on: { click: ev => console.log(myForm.getFormData()) }
             },
             [{
-                field: 'name', autofocus: true,
-                required: true, invalidFeedback:'must enter your name',
+                field: 'name', //autofocus: true,               
                 label: 'Adress',
+                 validators:[
+                    Validators.required(),
+                    Validators.minLength(5),
+                    Validators.maxLength(7)
+                ],
                 type: 'text', size: 3, info: 'zaitun is awesome'
             },
             {
                 field: 'date',
-                label: 'Age',
-                required: true,
+                label: 'Age',               
                 disabled: true,
                 props: { maxLength: 10, placeholder: '00/00/0000' },
                 type: 'date',
                 size: 3
             }],
             {
+                field: 'email',
+                label: 'Email',
+                type: 'email',
+               validators:[Validators.email()]
+            },
+            {
                 type: 'file',
                 field: 'dataFile',
                 invalidFeedback: '.jpg & .jpeg files are only allowed',
                 fileExt: ['.jpg', '.jpeg'],
                 label: 'Select file',
-                required: true
+                validators:[Validators.required()]
             },
             {
                 type: 'radio',
                 inline: !false,
-                required: true, size: 6,
+                size: 6,
+                validators:[Validators.required()],
                 name: 'mata',
                 label: 'Select',
                 field: 'asd',
@@ -111,24 +121,22 @@ function getFormOptions(): FormOptions {
             },
             {
 
-                field: 'f1',
-                required: true,
+                field: 'f1',                
                 value: 'leave',
-                label: 'I want to leave',
+                label: 'I want to leave',validators:[Validators.required()],
                 type: 'checkbox', size: 3, info: 'zaitun is awesome'
             },
             {
 
-                field: 'f2',
-                required: true,
+                field: 'f2',                
                 value: 'continue',
-                label: 'Do you want to continue',
+                label: 'Do you want to continue',validators:[Validators.required()],
                 type: 'checkbox', size: 3, info: 'zaitun is awesome'
             },
             {
-                field: 'gender', required: true,
+                field: 'gender',
                 type: 'select', invalidFeedback: 'This field is mandatory',
-                label: 'Gender', elmSize: 'sm', multiSelect: true,
+                label: 'Gender', elmSize: 'sm',validators:[Validators.required()],
                 info: 'Slect the for test!',
                 data: [
                     { text: 'Male', value: 1 },
@@ -138,9 +146,10 @@ function getFormOptions(): FormOptions {
                 ]
             },
             {
-                field: 'gender2', required: true,
+                field: 'gender2',
                 type: 'select', invalidFeedback: 'This field is mandatory',
                 label: 'Gender', elmSize: 'sm', multiSelect: true,
+                validators:[Validators.required()],
                 info: 'Slect the for test!', props: { size: 10 },
                 data: [
                     {
@@ -166,18 +175,23 @@ function getFormOptions(): FormOptions {
                 tabs: {
                     'Test Tab': {
                         inputs: [
-                            { field: 'age', type: 'number', label: 'Age' }
+                            {
+                                 field: 'age',
+                                  type: 'number',
+                                   label: 'Age',
+                                   validators:[Validators.minNumber(5), Validators.maxNumber(10)]
+                                 }
                             , { field: 'counter', type: 'component', actionType: COUNTER_UPDATE, component: Counter }
                         ]
                     },
                     'Test Tab2': {
                         inputs: [
-                            { field: 'address', required: true, type: 'text', label: 'Address', info: 'test danger' }
+                            { field: 'address',  type: 'text', label: 'Address', info: 'test danger' }
                         ]
                     },
                     'Test Tab3': {
                         inputs: [
-                            { field: 'address2', required: true, type: 'text', label: 'Address2', info: 'test danger' }
+                            { field: 'address2',  type: 'text', label: 'Address2', info: 'test danger' }
                         ]
                     }
                 }

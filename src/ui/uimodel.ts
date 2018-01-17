@@ -53,7 +53,8 @@ export interface Field{
     inline?:boolean;
     footer?:Field[]|elmFn;
     info?:string;  
-    required?:boolean;  
+    required?:boolean; 
+    validators?:Function[]; 
     invalidFeedback?:string; 
     name?:string; 
     value?:any; 
