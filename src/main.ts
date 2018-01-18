@@ -53,7 +53,7 @@ const routes: RouteOptions[] = [
         loadComponent: () => System.import('./parent')
     },
     {
-        path: 'form', cache:!true,
+        path: 'form', cache:true,
         loadEffects: [() => System.import('./counterEffect')],
         loadComponent: () => System.import('./formExample')
     }

@@ -4,14 +4,14 @@ import { ViewObj, Action, Router } from 'zaitun';
 import { FormOptions } from './ui/uimodel';
 import { juForm, TAB_CLICK, FORM_VALUE_CHANGED } from './ui/juForm'
 import Counter from './counter';
-const COUNTER_UPDATE = 'counterUpdate';
-const myForm = new juForm();
+
 import { empty } from 'rxjs/observable/empty';
 import 'rxjs/add/operator/mergeMap';
-import {Validators} from './ui/Validators'
-//var form = document.getElementById("form-validation");
+import { Validators } from './ui/Validators'
+const COUNTER_UPDATE = 'counterUpdate';
+const MY_FORM_UPDATE = 'my-form-update';
 
-// if (form.checkValidity() == false) 
+const myForm = new juForm();
 
 function init() {
     return {
@@ -24,7 +24,12 @@ function onCache(model: any) {
     return model;
 }
 function view({ model, dispatch, router }: ViewObj) {
-    return myForm.view({ model: model.form1, dispatch, router });
+
+    return myForm.view({
+        model: model.form1,
+        router,
+        dispatch: action => dispatch({ type: MY_FORM_UPDATE, payload: action })
+    });
 
     //return h('a', {attrs: {href: '/counter', for:'asd', minlength: 1, selected: true, disabled: false}},'HELLO LINK');
 }
@@ -33,13 +38,15 @@ function view({ model, dispatch, router }: ViewObj) {
 function update(model, action: Action) {
 
     switch (action.type) {
-        case FORM_VALUE_CHANGED:
-        case TAB_CLICK:
-            console.log(action.payload);
-            return model;
-        case COUNTER_UPDATE:
-            model.form1.counter = Counter.update(model.form1.counter, action.payload);
-            return model;
+        case MY_FORM_UPDATE:        
+            switch (action.payload.type) {
+                case FORM_VALUE_CHANGED:
+                case TAB_CLICK:
+                    return { form1:myForm.update(model.form1, action.payload)};
+                case COUNTER_UPDATE:
+                    model.form1.counter = Counter.update(model.form1.counter, action.payload.payload);
+                    return {...model};
+            }
         default: return model;
     }
 
@@ -64,12 +71,13 @@ function getFormOptions(): FormOptions {
             {
                 type: 'button',
                 label: 'Get Form Data',
+                props: (model: any) => ({ disabled: !myForm.isValid }),
                 on: { click: ev => console.log(myForm.getFormData()) }
             },
             [{
                 field: 'name', //autofocus: true,               
                 label: 'Adress',
-                 validators:[
+                validators: [
                     Validators.required(),
                     Validators.minLength(5),
                     Validators.maxLength(7)
@@ -78,7 +86,7 @@ function getFormOptions(): FormOptions {
             },
             {
                 field: 'date',
-                label: 'Age',               
+                label: 'Age',
                 disabled: true,
                 props: { maxLength: 10, placeholder: '00/00/0000' },
                 type: 'date',
@@ -88,7 +96,7 @@ function getFormOptions(): FormOptions {
                 field: 'email',
                 label: 'Email',
                 type: 'email',
-               validators:[Validators.email()]
+                validators: [Validators.email()]
             },
             {
                 type: 'file',
@@ -96,13 +104,13 @@ function getFormOptions(): FormOptions {
                 invalidFeedback: '.jpg & .jpeg files are only allowed',
                 fileExt: ['.jpg', '.jpeg'],
                 label: 'Select file',
-                validators:[Validators.required()]
+                validators: [Validators.required()]
             },
             {
                 type: 'radio',
                 inline: !false,
                 size: 6,
-                validators:[Validators.required()],
+                validators: [Validators.required()],
                 name: 'mata',
                 label: 'Select',
                 field: 'asd',
@@ -121,22 +129,22 @@ function getFormOptions(): FormOptions {
             },
             {
 
-                field: 'f1',                
+                field: 'f1',
                 value: 'leave',
-                label: 'I want to leave',validators:[Validators.required()],
+                label: 'I want to leave', validators: [Validators.required()],
                 type: 'checkbox', size: 3, info: 'zaitun is awesome'
             },
             {
 
-                field: 'f2',                
+                field: 'f2',
                 value: 'continue',
-                label: 'Do you want to continue',validators:[Validators.required()],
+                label: 'Do you want to continue', validators: [Validators.required()],
                 type: 'checkbox', size: 3, info: 'zaitun is awesome'
             },
             {
                 field: 'gender',
                 type: 'select', invalidFeedback: 'This field is mandatory',
-                label: 'Gender', elmSize: 'sm',validators:[Validators.required()],
+                label: 'Gender', elmSize: 'sm', validators: [Validators.required()],
                 info: 'Slect the for test!',
                 data: [
                     { text: 'Male', value: 1 },
@@ -149,7 +157,7 @@ function getFormOptions(): FormOptions {
                 field: 'gender2',
                 type: 'select', invalidFeedback: 'This field is mandatory',
                 label: 'Gender', elmSize: 'sm', multiSelect: true,
-                validators:[Validators.required()],
+                validators: [Validators.required()],
                 info: 'Slect the for test!', props: { size: 10 },
                 data: [
                     {
@@ -176,22 +184,22 @@ function getFormOptions(): FormOptions {
                     'Test Tab': {
                         inputs: [
                             {
-                                 field: 'age',
-                                  type: 'number',
-                                   label: 'Age',
-                                   validators:[Validators.minNumber(5), Validators.maxNumber(10)]
-                                 }
+                                field: 'age',
+                                type: 'number',
+                                label: 'Age',
+                                validators: [Validators.minNumber(5), Validators.maxNumber(10)]
+                            }
                             , { field: 'counter', type: 'component', actionType: COUNTER_UPDATE, component: Counter }
                         ]
                     },
                     'Test Tab2': {
                         inputs: [
-                            { field: 'address',  type: 'text', label: 'Address', info: 'test danger' }
+                            { field: 'address', type: 'text', label: 'Address', info: 'test danger' }
                         ]
                     },
                     'Test Tab3': {
                         inputs: [
-                            { field: 'address2',  type: 'text', label: 'Address2', info: 'test danger' }
+                            { field: 'address2', type: 'text', label: 'Address2', info: 'test danger' }
                         ]
                     }
                 }

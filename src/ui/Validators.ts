@@ -41,7 +41,7 @@ export class Validators {
         return function (val: any, field:Field): boolean {
             if(!val){return true;}
             field.invalidFeedback= message || `Maximum length is ${limit} characters.`;
-            val = (val || '').toString();console.log(val, limit, !(val.length > limit))
+            val = (val || '').toString();
             return !(val.length > limit) ;
         }
     }

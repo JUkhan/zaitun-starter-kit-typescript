@@ -1,4 +1,4 @@
-import { Dispatch, Router, h } from 'zaitun';
+import { Dispatch, Router, h, Action } from 'zaitun';
 import { guid } from './utils';
 import { FormOptions, Field } from './uimodel'
 
@@ -9,11 +9,13 @@ const OPTIONS_CHANGED = Symbol('OPTIONS_CHANGED');
 const FORM_VALUE_CHANGED = Symbol('form-value-change');
 
 class juForm {
-    dispatch: Dispatch;
-    options: FormOptions;
-    modalId: string;
-    model: any;
-    router: Router;
+    protected dispatch: Dispatch;
+    protected options: FormOptions;
+    protected modalId: string;
+    protected model: any;
+    protected router: Router;
+    protected FILES: { [key: string]: File[] } = {};
+    protected validation_followup = {};
     constructor() {
         this.dispatch = undefined;
         this.options = undefined;
@@ -36,10 +38,22 @@ class juForm {
         const vnodes = h('div.juForm', this._createElements(this.options));
         return this.options.viewMode === 'form' ? vnodes : this._createModal(vnodes, this.modalId);
     }
-    update(model, action) {
-        return model;
+    update(model, action: Action) {
+        switch (action.type) {
+            case FORM_VALUE_CHANGED:
+            console.log(action.payload);
+                let data={...model.data};                
+                this._setValueToObj(data, action.payload.field.field, action.payload.value);            
+                return {...model, data};
+            case TAB_CLICK:
+               console.log(action.payload);
+               return model;
+            default:
+                return model;
+        }
+
     }
-    _createElements(options) {
+    protected _createElements(options) {
         const vnodes = [];
         if (options.inputs) {
             options.inputs.forEach((item, index) => {
@@ -48,14 +62,14 @@ class juForm {
         }
         return vnodes
     }
-    modalClose() {
+    protected modalClose() {
         if (typeof this.options.modalClose === 'function') {
             this.options.modalClose() && this.showModal(false);
         } else {
             this.showModal(false);
         }
     }
-    _createModal(vnodes, id) {
+    protected _createModal(vnodes, id) {
         return h('div.modal', { attrs: { id: id } }, [
             h('div.modal-dialog.modal-' + this.options.modalSize, { role: 'document' }, [
                 h('div.modal-content', [
@@ -74,7 +88,7 @@ class juForm {
             ])
         ]);
     }
-    _getModalButtons(buttons) {
+    protected _getModalButtons(buttons) {
         if (!buttons) return '';
         if (typeof buttons === 'function') {
             return buttons(this.model)
@@ -84,7 +98,7 @@ class juForm {
         }
         return this._getVNode(buttons);
     }
-    _transformElement(item, index, vnodes) {
+    protected _transformElement(item, index, vnodes) {
 
         if (Array.isArray(item)) {
             const velms = [];
@@ -155,7 +169,7 @@ class juForm {
         }
     }
 
-    _createFieldSet(item) {
+    protected _createFieldSet(item) {
         if (item.hide) {
             return h('span', { style: { display: 'none' } }, 'hide');
         }
@@ -168,7 +182,7 @@ class juForm {
             attrs: { disabled: item.disabled }
         }, velms);
     }
-    _createTabs(item: Field) {
+    protected _createTabs(item: Field) {
         const elms = [], lies = [], tabcontents = [], tabNames = Object.keys(item.tabs);
 
         tabNames.forEach(tabName => {
@@ -206,14 +220,13 @@ class juForm {
         ]))
         return elms;
     }
-    _getVNode(footer) {
+    protected _getVNode(footer) {
         if (typeof footer === 'function') {
             return footer(this.model);
         }
         return footer;
     }
-    FILES: { [key: string]: File[] } = {};
-    _setFiles(item: Field, e): string {
+    protected _setFiles(item: Field, e): string {
         let fileList: FileList = e.target.files;
         if (fileList.length == 0) {
             return '';
@@ -229,14 +242,14 @@ class juForm {
         this.FILES[item.field] = files;
         return filesName.join(';');
     }
-    _hasValidExt(name: string, ext: string[]) {
+    protected _hasValidExt(name: string, ext: string[]) {
         if (Array.isArray(ext) && ext.length > 0) {
             let res = ext.filter(ex => name.endsWith(ex));
             return res && res.length > 0;
         }
         return true;
     }
-    _getListener(item: Field) {
+    protected _getListener(item: Field) {
         let events = {},
             hasChange = null,
             modelUpdateEvent = 'input';
@@ -265,8 +278,7 @@ class juForm {
             else if (item.type === 'file') {
                 val = this._setFiles(item, e);
             }
-            console.log(e);
-            this._setValueToData(item, val);
+            //this._setValueToData(item, val);
             if (hasChange) {
                 hasChange(val, e);
             }
@@ -278,14 +290,14 @@ class juForm {
         };
         return events
     }
-    _createLabel(item: Field, index) {
+    protected _createLabel(item: Field, index) {
         if (item.hide) return [];
         return h(`div.col-md-${item.size || 4}`, [h(`label`, {
             style: item.style,
             class: item.class
         }, item.label)]);
     }
-    _createButton(item, index) {
+    protected _createButton(item, index) {
         if (item.hide) return [];
         const buttons = [];
         if (item.inline) {
@@ -296,7 +308,7 @@ class juForm {
         }
         return h(`div.col-md-${item.size || 4}`, buttons);
     }
-    _createButtonElm(item: Field, index = 0) {
+    protected _createButtonElm(item: Field, index = 0) {
         return h(`button${item.classNames || ''}${item.elmSize ? '.btn-' + item.elmSize : ''}`,
             {
                 key: index,
@@ -304,15 +316,15 @@ class juForm {
                 style: item.style,
                 class: item.class,
                 attrs: {
-                    ...this._bindProps(item),
                     type: item.type,
-                    disabled: item.disabled
+                    disabled: item.disabled,
+                    ...this._bindProps(item)
                 }
             },
             item.label
         );
     }
-    _createCheckbox(item: Field, index, inline = false) {
+    protected _createCheckbox(item: Field, index, inline = false) {
         if (item.hide) return [];
         const elms = [];
         let value;
@@ -349,7 +361,7 @@ class juForm {
 
 
     }
-    _createCheckboxElm(item: Field, index, inline, isValid, value) {
+    protected _createCheckboxElm(item: Field, index, inline, isValid, value) {
         const css = item.required ? isValid ? '.is-valid' : '.is-invalid' : '';
         return h(`div.custom-control.custom-` + item.type,
             {
@@ -365,13 +377,13 @@ class juForm {
                             autofocus: item.autofocus
                         },
                         attrs: {
-                            ...this._bindProps(item),
                             type: item.type,
                             disabled: item.disabled,
                             name: item.name || 'oo7',
                             id: item.field + index + 0,
                             value: item.value,
-                            checked: item.value === value
+                            checked: item.value === value,
+                            ...this._bindProps(item)
                         }
                     }),
                 h('label.custom-control-label', {
@@ -383,14 +395,14 @@ class juForm {
             ]
         );
     }
-    _getLabelText(item) {
+    protected _getLabelText(item) {
         const labelItems = [item.label];
         if (item.required) {
             labelItems.push(h('span.required', '*'));
         }
         return labelItems;
     }
-    _getValueFromData(item: Field) {
+    protected _getValueFromData(item: Field) {
         let props = item.field.split('.');
         if (props.length > 1) {
             let obj = this.model.data;
@@ -400,23 +412,24 @@ class juForm {
         return this.model.data[item.field];
     }
 
-    _setValueToData(item: Field, val) {
-        let props = item.field.split('.');
-        if (props.length > 1) {
-            let obj = this.model.data;
-            let len = props.length - 1;
-            for (var index = 0; index < len; index++) {
+    protected _setValueToObj(obj:any, prop:string, val:any) {
+        let props = prop.split('.');
+        if (props.length > 1) {            
+            let len = props.length - 1, index;
+            for (index = 0; index < len; index++) {
                 obj = obj[props[index]];
             }
             obj[props[index]] = val;
         }
-        else { this.model.data[item.field] = val; }
-
+        else { obj[prop] = val; }        
     }
-    _bindProps(item) {
+    protected _bindProps(item) {
+        if (typeof item.props === 'function') {
+            return item.props(this.model);
+        }
         return typeof item.props === 'object' ? item.props : {}
     }
-    _createFileElm(item: Field, value) {
+    protected _createFileElm(item: Field, value) {
 
         return h('div.custom-file', {
             on: this._getListener(item),
@@ -426,10 +439,10 @@ class juForm {
                 autofocus: item.autofocus,
             },
             attrs: {
-                ...this._bindProps(item),
                 disabled: item.disabled,
                 multiple: item.multiSelect,
-                required: item.required
+                required: item.required,
+                ...this._bindProps(item)
             }
         },
             [
@@ -447,7 +460,7 @@ class juForm {
             ]
         );
     }
-    _createElement(item: Field, index) {
+    protected _createElement(item: Field, index) {
         if (item.hide) return [];
         const children = [];
         const labelPos = this.options.labelPos || item.labelPos || 'left';
@@ -472,12 +485,12 @@ class juForm {
                     style: item.style,
                     class: item.class,
                     props: {
-                        ...this._bindProps(item),
                         type: item.type,
                         autofocus: item.autofocus,
                         required: item.required,
                         value: field_value,
-                        disabled: item.disabled
+                        disabled: item.disabled,
+                        ...this._bindProps(item)
                     }
                 }));
         }
@@ -486,7 +499,7 @@ class juForm {
             children.push(h('small.form-text.text-muted', item.info));
         }
         if (!item.isValid && item.invalidFeedback && item.type !== 'file') {
-            children.push(h('div.invalid-feedback', item.invalidFeedback));
+            children.push(h('div.invalid-feedback', item.invalidFeedback || ''));
         }
 
         if (labelPos === 'left' && item.label) {
@@ -498,19 +511,20 @@ class juForm {
         childrenWithLabel.push(h(`div.col-md-${item.size || 4}`, children));
         return childrenWithLabel;
     }
-    _applyFieldValidation(field: Field, field_value: any) {
+    protected _applyFieldValidation(field: Field, field_value: any) {
 
-        if (Array.isArray(field.validators) && field.validators.length) {           
-            return field.validators.find(fx => !fx(field_value, field))===undefined;
+        if (Array.isArray(field.validators) && field.validators.length) {
+            this.validation_followup[field.field] = field.validators.find(fx => !fx(field_value, field)) === undefined;
+            return this.validation_followup[field.field];
         }
         return true;
 
     }
-    _getConCssClass(item: Field) {
+    protected _getConCssClass(item: Field) {
         var css = item.isValid ? '.is-valid' : '.is-invalid';
         return css;
     }
-    _createSelect(item: Field, field_value) {
+    protected _createSelect(item: Field, field_value) {
         if (!item.data) item.data = [];
         if (!item.multiSelect && item.data[0].value !== '0') {
             item.data = [{ text: item.selectTitle || 'Select item', value: '0' }, ...item.data];
@@ -537,10 +551,10 @@ class juForm {
                     autofocus: item.autofocus,
                 },
                 attrs: {
-                    ...this._bindProps(item),
                     disabled: item.disabled,
                     multiple: item.multiSelect,
-                    required: item.required
+                    required: item.required,
+                    ...this._bindProps(item)
                 }
             },
             item.data.map((it, index) => {
@@ -575,7 +589,7 @@ class juForm {
         );
 
     }
-    _findTab(items, tabName) {
+    protected _findTab(items, tabName) {
         for (let item of items) {
             if (Array.isArray(item)) {
                 const res = this._findTab(item, tabName);
@@ -588,7 +602,7 @@ class juForm {
         }
         return null;
     }
-    _findField(items, fieldName) {
+    protected _findField(items, fieldName) {
         for (let item of items) {
             if (Array.isArray(item)) {
                 const res = this._findField(item, fieldName);
@@ -607,19 +621,19 @@ class juForm {
         }
         return null;
     }
-    findTab(tabName) {
+    public findTab(tabName) {
         if (this.options.inputs) {
             return this._findTab(this.options.inputs, tabName);
         }
         return null;
     }
-    findField(fiendName) {
+    public findField(fiendName) {
         if (this.options.inputs) {
             return this._findField(this.options.inputs, fiendName);
         }
         return null;
     }
-    selectTab(tabName, item: Field = null) {
+    public selectTab(tabName, item: Field = null) {
         if (!item) {
             item = this.findTab(tabName);
             if (item) { item = item[1]; }
@@ -661,26 +675,30 @@ class juForm {
         }
         return this;
     }
-    refresh() {
+    public refresh() {
         this.dispatch({ type: OPTIONS_CHANGED });
     }
-    showModal(isOpen) {
+    public showModal(isOpen: boolean = true) {
         if (isOpen) $('#' + this.modalId).modal({ backdrop: false, show: true });
         else $('#' + this.modalId).modal('hide');
     }
-    setSelectData(fieldName, data) {
+    public setSelectData(fieldName, data) {
         const item = this.findField(fieldName);
         if (item) {
             item.data = data;
         }
         return this;
     }
-    setFormData(data) {
+    public setFormData(data) {
         this.model.data = data;
         return this;
     }
-    getFormData() {
+    public getFormData() {
         return Object.assign({}, this.model.data, this.FILES);
+    }
+    public get isValid(): boolean {
+        return Object.keys(this.validation_followup)
+            .find(key => !this.validation_followup[key]) === undefined;
     }
 }
 

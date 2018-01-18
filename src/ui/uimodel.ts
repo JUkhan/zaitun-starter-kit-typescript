@@ -1,6 +1,7 @@
 import {VNode} from 'zaitun/dom';
 
-export declare type elmFn=(model:any)=>VNode;
+ declare type elmFn=(model:any)=>VNode;
+ declare type propsFn=(model:any)=>{[key:string]:any};
 
 export interface FormModel{
     data:{[key:string]:any};
@@ -39,7 +40,7 @@ export interface Field{
     tabs?:{[key:string]:Tab};
     classNames?:string;
     on?:{[key:string]:Function};   
-    props?:{[key:string]:any} ;
+    props?:{[key:string]:any}|propsFn ;
     hide?:boolean;
     legend?:string;
     disabled?:boolean;   
