@@ -1,13 +1,23 @@
 
 import { ViewObj, Action, Router } from 'zaitun';
-import {div } from 'zaitun/dom';
-//import { html } from 'snabbdom-jsx';
+import { div } from 'zaitun/dom';
+
 import { FormOptions } from './ui/uimodel';
-import { juForm, TAB_CLICK, FORM_VALUE_CHANGED } from './ui/juForm'
+import {
+    juForm,
+    TAB_CLICK,
+    FORM_VALUE_CHANGED,
+    map_select_data_Action,
+    SELECT_DATA_ACTION
+} from './ui/juForm'
 import Counter from './counter';
 
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/from';
 import { empty } from 'rxjs/observable/empty';
-import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/do';
 import { Validators } from './ui/Validators'
 const COUNTER_UPDATE = 'counterUpdate';
 const MY_FORM_UPDATE = 'my-form-update';
@@ -16,50 +26,72 @@ const myForm = new juForm();
 
 function init() {
     return {
-        form1: { data: { name: 'jasim' }, options: getFormOptions(), counter: Counter.init() },
+        form1: {
+            data: { name: 'zaitun', age: '', address: '', address2: '' },
+            options: getFormOptions(), counter: Counter.init()
+        },
 
     }
 }
+
 function onCache(model: any) {
     model.form1.options = init().form1.options;
     return model;
 }
+
 function view({ model, dispatch, router }: ViewObj) {
 
     return myForm.view({
         model: model.form1,
         router,
-        dispatch:router.bindEffect(action => dispatch({ type: MY_FORM_UPDATE, payload: action }))
+        dispatch: router.bindEffect(action => dispatch({ type: MY_FORM_UPDATE, payload: action }))
     });
 
-    //return h('a', {attrs: {href: '/counter', for:'asd', minlength: 1, selected: true, disabled: false}},'HELLO LINK');
 }
-
 
 function update(model, action: Action) {
 
     switch (action.type) {
-        case MY_FORM_UPDATE:        
+        case MY_FORM_UPDATE:
             switch (action.payload.type) {
                 case FORM_VALUE_CHANGED:
                 case TAB_CLICK:
-                    return { form1:myForm.update(model.form1, action.payload)};
+                case SELECT_DATA_ACTION:
+                    return { form1: myForm.update(model.form1, action.payload) };
                 case COUNTER_UPDATE:
-                   let counter = Counter.update(model.form1.counter, action.payload.payload);                  
-                   return {form1:{...model.form1, counter}};
+                    let counter = Counter.update(model.form1.counter, action.payload.payload);
+                    return { form1: { ...model.form1, counter } };
             }
         default: return model;
     }
 
 }
-function afterViewRender(dispatch, router: Router) {   
+function loadCountryInfo(countryName) {
+    return Observable.from(
+        fetch(`https://en.wikipedia.org/w/api.php?&origin=*&action=opensearch&search=${countryName}&limit=5`)
+            .then(res => res.json()))
+        .map(res => res[1].map(_ => ({ text: _, value: _ })))
+}
+function afterViewRender(dispatch, router: Router) {
     router.addEffect(eff =>
-        eff.whenAction(TAB_CLICK)
-            .mergeMap(action => {
-                console.log('formExample....',action);
+        eff.whenAction(FORM_VALUE_CHANGED)
+            .switchMap(action => {
+                if (action.payload.field.field === 'country') {
+                    return loadCountryInfo(action.payload.value)
+                        .map(data => map_select_data_Action(action.dispatch, 'countryInfo', data));
+                }
                 return empty();
             })
-    )
+    );
+    
+    const fdata = myForm.getFormData();
+    if (fdata.country) {
+        loadCountryInfo(fdata.country)
+            .subscribe(data => {
+                myForm.setSelectData('countryInfo', data);
+                dispatch({ type: 'data-load' });
+            });
+    }
 }
 function getFormOptions(): FormOptions {
     return {
@@ -68,25 +100,43 @@ function getFormOptions(): FormOptions {
         labelSize: 2,
         labelPos: 'left',
         title: 'Form Title',
-        inputs: [            
+        inputs: [
             [{
                 field: 'name', //autofocus: true,               
-                label:model =>`Name( ${model.data.name} )`,
+                label: model => `Name( ${model.data.name} )`,
                 validators: [
                     Validators.required(),
                     Validators.minLength(5),
                     Validators.maxLength(7)
                 ],
-                type: 'text', size: 3, info: 'zaitun is awesome'
+                type: 'text', size: 4, info: 'zaitun is awesome'
             },
             {
                 field: 'date',
-                label: 'Age',
-                disabled:(model)=>!model.data.email,
-                validators:[Validators.required()],
+                label: 'Date of birth',
+                disabled: (model) => !model.data.email,
+                validators: [Validators.required()],
                 props: { maxLength: 10, placeholder: '00/00/0000' },
                 type: 'date',
-                size: 3
+                size: 4
+            }],
+            [{
+                field: 'country',
+                label: 'Country',
+                validators: [Validators.required()],
+                type: 'select', size: 4,
+                data: [
+                    { text: 'Bangladesh', value: 'bangladesh' },
+                    { text: 'Pakistan', value: 'pakistan' },
+                    { text: 'Saudi Arabia', value: 'saudi arabia' },
+                    { text: 'India', value: 'india' },
+                ]
+            },
+            {
+                field: 'countryInfo',
+                label: 'Country Info',
+                validators: [Validators.required()],
+                type: 'select', size: 4,
             }],
             {
                 field: 'email',
@@ -109,37 +159,42 @@ function getFormOptions(): FormOptions {
                 validators: [Validators.required()],
                 name: 'mata',
                 label: 'Select',
-                field: 'asd',
+                field: 'radioOption',
                 radioList: [
                     {
-                        value: 'leave',
-                        label: 'I want to leave',
+                        value: 'hide',
+                        label: 'Hide Tab3',
                         type: 'radio', size: 3, info: 'zaitun is awesome'
                     },
                     {
-                        value: 'continue',
-                        label: 'Do you want to continue',
+                        value: 'show',
+                        label: 'Show Tab3',
                         type: 'radio', size: 3, info: 'zaitun is awesome'
                     },
                 ]
             },
             {
+                label: 'Choose',
+                type: 'checkbox',
+                radioList: [
+                    {
 
-                field: 'f1',
-                value: 'leave',
-                label: 'I want to leave', validators: [Validators.required()],
-                type: 'checkbox', size: 3, info: 'zaitun is awesome'
-            },
-            {
+                        field: 'f1',
+                        value: 'leave',
+                        label: 'I love javascript', validators: [Validators.required()],
+                        type: 'checkbox', size: 3, info: 'zaitun is awesome'
+                    },
+                    {
 
-                field: 'f2',
-                value: 'continue',
-                label: 'Do you want to continue', validators: [Validators.required()],
-                type: 'checkbox', size: 3, info: 'zaitun is awesome'
+                        field: 'f2',
+                        value: 'continue',
+                        label: 'I love kotlin',
+                        type: 'checkbox', size: 3, info: 'zaitun is awesome'
+                    }]
             },
             {
                 field: 'gender',
-                type: 'select', invalidFeedback: 'This field is mandatory',
+                type: 'select',
                 label: 'Gender', elmSize: 'sm', validators: [Validators.required()],
                 info: 'Slect the for test!',
                 data: [
@@ -175,29 +230,60 @@ function getFormOptions(): FormOptions {
                     { label: 'ADD', type: 'button' },
                     { label: 'remove', type: 'button' }
                 ],
-                activeTab: 'Test Tab',
+                activeTab: 'Tab1',
+                tabClick: (model, tabName, preTab) => {
+                    if (tabName === 'Tab2' && model.data.age !== '7') {
+                        alert('Please enter age value 7');
+                        return false;
+                    }
+                    else if (tabName === 'Tab3' && model.data.address !== 'dhaka') {
+                        alert("Please enter address value 'dhaka'");
+                        return false;
+                    }
+                    return true;
+                },
                 tabs: {
-                    'Test Tab': {
+                    'Tab1': {
                         inputs: [
                             {
                                 field: 'age',
                                 type: 'number',
-                                label: 'Age',                                
-                                validators: [Validators.minNumber(5), Validators.maxNumber(10)]
+                                label: 'Age',
+                                info: 'Enter value for next tab enable',
+                                validators: [
+                                    Validators.minNumber(5),
+                                    Validators.maxNumber(10)
+                                ]
                             }
-                            , { field: 'counter', type: 'component', actionType: COUNTER_UPDATE, component: Counter }
+                            , {
+                                field: 'counter',
+                                type: 'component',
+                                actionType: COUNTER_UPDATE,
+                                component: Counter
+                            }
                         ]
                     },
-                    'Test Tab2': {  
-                        disabled:model=>model.data.asd==='continue',                      
+                    'Tab2': {
+                        disabled: model => !model.data.age,
                         inputs: [
-                            { field: 'address', type: 'text', label: 'Address', info: 'test danger' }
+                            {
+                                field: 'address',
+                                type: 'text',
+                                label: 'Address',
+                                info: 'Enter value for next tab enable',
+                            }
                         ]
                     },
-                    'Test Tab3': {
-                        hide:model=>model.data.asd==='continue',
+                    'Tab3': {
+                        disabled: model => !model.data.address,
+                        hide: model => model.data.radioOption === 'hide',
                         inputs: [
-                            { field: 'address2', type: 'text', label: 'Address2', info: 'test danger' }
+                            {
+                                field: 'address2',
+                                type: 'text',
+                                label: 'Address2',
+                                info: 'test danger'
+                            }
                         ]
                     }
                 }
@@ -209,8 +295,8 @@ function getFormOptions(): FormOptions {
                 on: { click: ev => console.log(myForm.getFormData()) }
             },
             {
-                type:'vnode',
-                vnode:model=>div('.card',JSON.stringify(model.data))
+                type: 'vnode',
+                vnode: model => div('.card', JSON.stringify(model.data))
             }
 
         ]

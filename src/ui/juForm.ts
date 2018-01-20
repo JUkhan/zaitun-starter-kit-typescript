@@ -3,10 +3,21 @@ import { guid } from './utils';
 import { FormOptions, Field } from './uimodel'
 
 
+
 declare const $: any;
 const TAB_CLICK = Symbol('TAB_CLICK');
 const OPTIONS_CHANGED = Symbol('OPTIONS_CHANGED');
 const FORM_VALUE_CHANGED = Symbol('form-value-change');
+const SELECT_DATA_ACTION = Symbol('Select-action');
+
+function map_select_data_Action(dispatch: Dispatch, fieldName: string, data: any[]):Action {
+    return {
+        type: SELECT_DATA_ACTION,
+        payload: {fieldName, data},
+        dispatch:dispatch
+    }
+
+}
 
 class juForm {
     protected dispatch: Dispatch;
@@ -49,6 +60,9 @@ class juForm {
             case TAB_CLICK:
                 console.log(action.payload);
                 return model;
+            case SELECT_DATA_ACTION:           
+            this.setSelectData(action.payload.fieldName, action.payload.data);
+            return model;
             default:
                 return model;
         }
@@ -303,8 +317,8 @@ class juForm {
     protected _createLabel(item: Field, index) {
         if (this._getBoolVal(item.hide)) return [];
         return h(`div.col-md-${item.size || 4}`, [h(`label`, {
-            style:this._getStyles(item.style),
-            class:this._getStyles(item.class)
+            style: this._getStyles(item.style),
+            class: this._getStyles(item.class)
         }, this._getLabel(item))]);
     }
     protected _createButton(item, index) {
@@ -320,7 +334,7 @@ class juForm {
     }
     protected _createButtonElm(item: Field, index = 0) {
         return h(`button${item.classNames || ''}${item.elmSize ? '.btn-' + item.elmSize : ''}`,
-            {                
+            {
                 on: this._getListener(item),
                 style: this._getStyles(item.style),
                 class: this._getStyles(item.class),
@@ -533,7 +547,7 @@ class juForm {
     }
     protected _createSelect(item: Field, field_value) {
         if (!item.data) item.data = [];
-        if (!item.multiSelect && item.data[0].value !== '0') {
+        if (!item.multiSelect && (item.data.length == 0 || item.data[0].value !== '0')) {
             item.data = [{ text: item.selectTitle || 'Select item', value: '0' }, ...item.data];
         }
         if (item.multiSelect) {
@@ -561,7 +575,7 @@ class juForm {
                     disabled: this._getBoolVal(item.disabled),
                     multiple: item.multiSelect,
                     required: item.required,
-                    id:item.field,
+                    id: item.field,
                     ...this._bindProps(item)
                 }
             },
@@ -649,7 +663,7 @@ class juForm {
         if (item) {
             let prevTab = item.activeTab;
             const res = typeof item.tabClick === 'function' ?
-                item.tabClick(tabName, item.activeTab) : true;
+                item.tabClick(this.model, tabName, item.activeTab) : true;
             if (typeof res === 'boolean') {
                 if (res) {
                     item.activeTab = tabName;
@@ -710,4 +724,4 @@ class juForm {
     }
 }
 
-export { juForm, TAB_CLICK, FORM_VALUE_CHANGED }
+export { juForm, TAB_CLICK, FORM_VALUE_CHANGED,SELECT_DATA_ACTION, map_select_data_Action }

@@ -35,7 +35,7 @@ export interface Field{
     elmSize?:'sm'|'lg';        
     data?:Array<any>;
     activeTab?:string;    
-    tabClick?:(tabName:string, preTab:string)=>boolean|Promise<boolean>;
+    tabClick?:(model:any, tabName:string, preTab:string)=>boolean|Promise<boolean>;
     vnode?:(model:any)=>VNode;  
     actionType?:string;
     component?:any;
