@@ -1,5 +1,6 @@
 
 import { ViewObj, Action, Router } from 'zaitun';
+import {div } from 'zaitun/dom';
 //import { html } from 'snabbdom-jsx';
 import { FormOptions } from './ui/uimodel';
 import { juForm, TAB_CLICK, FORM_VALUE_CHANGED } from './ui/juForm'
@@ -44,8 +45,8 @@ function update(model, action: Action) {
                 case TAB_CLICK:
                     return { form1:myForm.update(model.form1, action.payload)};
                 case COUNTER_UPDATE:
-                    model.form1.counter = Counter.update(model.form1.counter, action.payload.payload);
-                    return {...model};
+                   let counter = Counter.update(model.form1.counter, action.payload.payload);                  
+                   return {form1:{...model.form1, counter}};
             }
         default: return model;
     }
@@ -70,7 +71,7 @@ function getFormOptions(): FormOptions {
         inputs: [            
             [{
                 field: 'name', //autofocus: true,               
-                label: 'Adress',
+                label:model =>`Name( ${model.data.name} )`,
                 validators: [
                     Validators.required(),
                     Validators.minLength(5),
@@ -81,7 +82,8 @@ function getFormOptions(): FormOptions {
             {
                 field: 'date',
                 label: 'Age',
-                disabled: true,
+                disabled:(model)=>!model.data.email,
+                validators:[Validators.required()],
                 props: { maxLength: 10, placeholder: '00/00/0000' },
                 type: 'date',
                 size: 3
@@ -180,18 +182,20 @@ function getFormOptions(): FormOptions {
                             {
                                 field: 'age',
                                 type: 'number',
-                                label: 'Age',
+                                label: 'Age',                                
                                 validators: [Validators.minNumber(5), Validators.maxNumber(10)]
                             }
                             , { field: 'counter', type: 'component', actionType: COUNTER_UPDATE, component: Counter }
                         ]
                     },
-                    'Test Tab2': {
+                    'Test Tab2': {  
+                        disabled:model=>model.data.asd==='continue',                      
                         inputs: [
                             { field: 'address', type: 'text', label: 'Address', info: 'test danger' }
                         ]
                     },
                     'Test Tab3': {
+                        hide:model=>model.data.asd==='continue',
                         inputs: [
                             { field: 'address2', type: 'text', label: 'Address2', info: 'test danger' }
                         ]
@@ -204,6 +208,10 @@ function getFormOptions(): FormOptions {
                 props: (model: any) => ({ disabled: !myForm.isValid }),
                 on: { click: ev => console.log(myForm.getFormData()) }
             },
+            {
+                type:'vnode',
+                vnode:model=>div('.card',JSON.stringify(model.data))
+            }
 
         ]
 

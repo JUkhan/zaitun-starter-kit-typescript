@@ -29,6 +29,7 @@ class juForm {
         this.options = model.options;
         this.model = model;
         this.router = router;
+        this.validation_followup = {};
         if (!model.data) {
             model.data = {};
         }
@@ -41,13 +42,13 @@ class juForm {
     update(model, action: Action) {
         switch (action.type) {
             case FORM_VALUE_CHANGED:
-            console.log(action.payload);
-                let data={...model.data};                
-                this._setValueToObj(data, action.payload.field.field, action.payload.value);            
-                return {...model, data};
+                console.log(action.payload);
+                let data = { ...model.data };
+                this._setValueToObj(data, action.payload.field.field, action.payload.value);
+                return { ...model, data };
             case TAB_CLICK:
-               console.log(action.payload);
-               return model;
+                console.log(action.payload);
+                return model;
             default:
                 return model;
         }
@@ -170,7 +171,7 @@ class juForm {
     }
 
     protected _createFieldSet(item) {
-        if (item.hide) {
+        if (this._getBoolVal(item.hide)) {
             return h('span', { style: { display: 'none' } }, 'hide');
         }
         const velms = [];
@@ -179,7 +180,7 @@ class juForm {
         }
         velms.push(...this._createElements(item));
         return h(`fieldset.col-md-${item.size || 12}`, {
-            attrs: { disabled: item.disabled }
+            attrs: { disabled: this._getBoolVal(item.disabled) }
         }, velms);
     }
     protected _createTabs(item: Field) {
@@ -187,8 +188,8 @@ class juForm {
 
         tabNames.forEach(tabName => {
             let tabId = '#' + tabName.replace(/\s+/, '_###_'),
-                disabled = !!item.tabs[tabName].disabled,
-                hide = !!item.tabs[tabName].hide;
+                disabled = this._getBoolVal(item.tabs[tabName].disabled),
+                hide = this._getBoolVal(item.tabs[tabName].hide);
             if (!hide) {
                 lies.push(h(`li.nav-item`, [
                     h(`a.nav-link`, {
@@ -290,15 +291,24 @@ class juForm {
         };
         return events
     }
+    protected _getStyles(data: any) {
+        return typeof data === 'function' ? data(this.model) : undefined;
+    }
+    protected _getBoolVal(data: any) {
+        return typeof data === 'function' ? data(this.model) : false;
+    }
+    protected _getLabel(field: Field) {
+        return typeof field.label === 'function' ? field.label(this.model) : field.label;
+    }
     protected _createLabel(item: Field, index) {
-        if (item.hide) return [];
+        if (this._getBoolVal(item.hide)) return [];
         return h(`div.col-md-${item.size || 4}`, [h(`label`, {
-            style: item.style,
-            class: item.class
-        }, item.label)]);
+            style:this._getStyles(item.style),
+            class:this._getStyles(item.class)
+        }, this._getLabel(item))]);
     }
     protected _createButton(item, index) {
-        if (item.hide) return [];
+        if (this._getBoolVal(item.hide)) return [];
         const buttons = [];
         if (item.inline) {
             item.inline.forEach((el, inx) =>
@@ -310,22 +320,21 @@ class juForm {
     }
     protected _createButtonElm(item: Field, index = 0) {
         return h(`button${item.classNames || ''}${item.elmSize ? '.btn-' + item.elmSize : ''}`,
-            {
-                key: index,
+            {                
                 on: this._getListener(item),
-                style: item.style,
-                class: item.class,
+                style: this._getStyles(item.style),
+                class: this._getStyles(item.class),
                 attrs: {
                     type: item.type,
-                    disabled: item.disabled,
+                    disabled: this._getBoolVal(item.disabled),
                     ...this._bindProps(item)
                 }
             },
-            item.label
+            this._getLabel(item)
         );
     }
     protected _createCheckbox(item: Field, index, inline = false) {
-        if (item.hide) return [];
+        if (this._getBoolVal(item.hide)) return [];
         const elms = [];
         let value;
         const labelSize = item.labelSize || this.options.labelSize || 2;
@@ -334,7 +343,7 @@ class juForm {
                 value = this._getValueFromData(item);
                 item.isValid = this._applyFieldValidation(item, value);
             }
-            elms.push(h(`div.col-md-${labelSize}`, item.label));
+            elms.push(h(`div.col-md-${labelSize}`, this._getLabel(item)));
             elms.push(h(`div.col-md-${item.size || 4}`, item.radioList.map((el, index) => {
                 el.type = item.type;
                 el.required = item.required;
@@ -370,15 +379,15 @@ class juForm {
                 h('input.custom-control-input' + css,
                     {
                         on: this._getListener(item),
-                        style: item.style,
-                        class: item.class,
+                        style: this._getStyles(item.style),
+                        class: this._getStyles(item.class),
                         key: item.field + index,
                         props: {
                             autofocus: item.autofocus
                         },
                         attrs: {
                             type: item.type,
-                            disabled: item.disabled,
+                            disabled: this._getBoolVal(item.disabled),
                             name: item.name || 'oo7',
                             id: item.field + index + 0,
                             value: item.value,
@@ -391,17 +400,11 @@ class juForm {
                     attrs: {
                         for: item.field + index + 0
                     }
-                }, item.label)
+                }, this._getLabel(item))
             ]
         );
     }
-    protected _getLabelText(item) {
-        const labelItems = [item.label];
-        if (item.required) {
-            labelItems.push(h('span.required', '*'));
-        }
-        return labelItems;
-    }
+
     protected _getValueFromData(item: Field) {
         let props = item.field.split('.');
         if (props.length > 1) {
@@ -412,16 +415,16 @@ class juForm {
         return this.model.data[item.field];
     }
 
-    protected _setValueToObj(obj:any, prop:string, val:any) {
+    protected _setValueToObj(obj: any, prop: string, val: any) {
         let props = prop.split('.');
-        if (props.length > 1) {            
+        if (props.length > 1) {
             let len = props.length - 1, index;
             for (index = 0; index < len; index++) {
                 obj = obj[props[index]];
             }
             obj[props[index]] = val;
         }
-        else { obj[prop] = val; }        
+        else { obj[prop] = val; }
     }
     protected _bindProps(item) {
         if (typeof item.props === 'function') {
@@ -433,13 +436,13 @@ class juForm {
 
         return h('div.custom-file', {
             on: this._getListener(item),
-            style: item.style,
-            class: item.class,
+            style: this._getStyles(item.style),
+            class: this._getStyles(item.class),
             props: {
                 autofocus: item.autofocus,
             },
             attrs: {
-                disabled: item.disabled,
+                disabled: this._getBoolVal(item.disabled),
                 multiple: item.multiSelect,
                 required: item.required,
                 ...this._bindProps(item)
@@ -461,7 +464,7 @@ class juForm {
         );
     }
     protected _createElement(item: Field, index) {
-        if (item.hide) return [];
+        if (this._getBoolVal(item.hide)) return [];
         const children = [];
         const labelPos = this.options.labelPos || item.labelPos || 'left';
         const childrenWithLabel = [];
@@ -470,7 +473,8 @@ class juForm {
         if (labelPos === 'top' && item.label) {
             children.push(h(`label.col-form-label${item.elmSize ?
                 '.col-form-label-' + item.elmSize : ''}`,
-                this._getLabelText(item)));
+                { attrs: { for: item.field } },
+                this._getLabel(item)));
         }
         if (item.type === 'select') {
             children.push(this._createSelect(item, field_value));
@@ -482,14 +486,15 @@ class juForm {
             children.push(h(`input.form-control${this._getConCssClass(item)}`,
                 {
                     on: this._getListener(item),
-                    style: item.style,
-                    class: item.class,
+                    style: this._getStyles(item.style),
+                    class: this._getStyles(item.class),
                     props: {
                         type: item.type,
+                        id: item.field,
                         autofocus: item.autofocus,
                         required: item.required,
                         value: field_value,
-                        disabled: item.disabled,
+                        disabled: this._getBoolVal(item.disabled),
                         ...this._bindProps(item)
                     }
                 }));
@@ -506,14 +511,16 @@ class juForm {
             const labelSize = item.labelSize || this.options.labelSize || 2;
             childrenWithLabel.push(h(`label.col-form-label${item.elmSize ?
                 '.col-form-label-' + item.elmSize : ''}${'.col-md-' + labelSize}`,
-                this._getLabelText(item)));
+                { attrs: { for: item.field } },
+                this._getLabel(item)));
         }
         childrenWithLabel.push(h(`div.col-md-${item.size || 4}`, children));
         return childrenWithLabel;
     }
     protected _applyFieldValidation(field: Field, field_value: any) {
 
-        if (Array.isArray(field.validators) && field.validators.length) {
+        if (!(this._getBoolVal(field.disabled) || this._getBoolVal(field.hide))
+            && Array.isArray(field.validators) && field.validators.length) {
             this.validation_followup[field.field] = field.validators.find(fx => !fx(field_value, field)) === undefined;
             return this.validation_followup[field.field];
         }
@@ -545,15 +552,16 @@ class juForm {
         return h(`select.custom-select.form-control${this._getConCssClass(item)}`,
             {
                 on: this._getListener(item),
-                style: item.style,
-                class: item.class,
+                style: this._getStyles(item.style),
+                class: this._getStyles(item.class),
                 props: {
                     autofocus: item.autofocus,
                 },
                 attrs: {
-                    disabled: item.disabled,
+                    disabled: this._getBoolVal(item.disabled),
                     multiple: item.multiSelect,
                     required: item.required,
+                    id:item.field,
                     ...this._bindProps(item)
                 }
             },

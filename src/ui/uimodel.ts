@@ -2,6 +2,8 @@ import {VNode} from 'zaitun/dom';
 
  declare type elmFn=(model:any)=>VNode;
  declare type propsFn=(model:any)=>{[key:string]:any};
+ declare type boolFn=(model:any)=>boolean;
+ declare type stringFn=(model:any)=>string;
 
 export interface FormModel{
     data:{[key:string]:any};
@@ -24,7 +26,7 @@ export interface FormOptions{
 
 export interface Field{
     field?:string;
-    label?:string;
+    label?:string|stringFn;
     type:'select'|'text'|'password'|'datetime-local'|
     'date'|'month'|'tabs'|'time'|'week'|
     'number'|'email'|'url'|'checkbox'|'radio'|'search'|'tel'|'color'|
@@ -41,14 +43,14 @@ export interface Field{
     classNames?:string;
     on?:{[key:string]:Function};   
     props?:{[key:string]:any}|propsFn ;
-    hide?:boolean;
+    hide?:boolFn;
     legend?:string;
-    disabled?:boolean;   
+    disabled?:boolFn;   
     inputs?:Array<Field|Array<Field>>; 
     labelPos?:'left'|'top';  
     labelSize?:number;
-    style?:{[key:string]:any} ;   
-    class?:{[key:string]:any} ;
+    style?:propsFn ;   
+    class?:propsFn ;
     multiSelect?:boolean; 
     radioList?:Array<Field>; 
     inline?:boolean;
@@ -67,7 +69,7 @@ export interface Field{
 }
 
 export interface Tab{
-    disabled?:boolean;
-    hide?:boolean;
+    disabled?:boolFn;
+    hide?:boolFn;
     inputs?:Array<Field|Array<Field>>;   
 }
