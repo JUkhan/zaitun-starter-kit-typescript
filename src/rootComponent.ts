@@ -24,7 +24,7 @@ function init() {
     };
 }
 function afterChildRender(dispatch:Dispatch, router: Router) {
-    router.effect$
+    router
         .addEffect(eff =>
             eff.whenAction(counter.actions.INCREMENT).mergeMap(action => {
                 dispatch({ type: INC_AT, payload: new Date().toString() });

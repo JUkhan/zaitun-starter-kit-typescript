@@ -20,7 +20,7 @@ function init() {
 
 function afterViewRender(dispatch, router: Router) {
 
-    router.effect$.addEffect(eff$ =>
+    router.addEffect(eff$ =>
         eff$.whenAction(SEARCH)
             .debounceTime(500)
             .distinctUntilChanged()

@@ -1,4 +1,4 @@
-import { EffectSubscription } from 'zaitun';
+import { Router } from 'zaitun';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
@@ -8,8 +8,8 @@ import counter from './counter';
 
 
 export class CounterEffect {
-    constructor(es: EffectSubscription) {
-        es.addEffect(effect$ =>
+    constructor(router:Router) {
+        router.addEffect(effect$ =>
             effect$
                 .whenAction(counter.actions.LAZY)
                 .delay(1000)

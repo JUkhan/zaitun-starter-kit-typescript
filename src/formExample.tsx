@@ -28,7 +28,7 @@ function view({ model, dispatch, router }: ViewObj) {
     return myForm.view({
         model: model.form1,
         router,
-        dispatch: action => dispatch({ type: MY_FORM_UPDATE, payload: action })
+        dispatch:router.bindEffect(action => dispatch({ type: MY_FORM_UPDATE, payload: action }))
     });
 
     //return h('a', {attrs: {href: '/counter', for:'asd', minlength: 1, selected: true, disabled: false}},'HELLO LINK');
@@ -51,11 +51,11 @@ function update(model, action: Action) {
     }
 
 }
-function afterViewRender(dispatch, router: Router) {
-    router.effect$.addEffect(eff =>
-        eff.whenAction(TAB_CLICK, FORM_VALUE_CHANGED)
+function afterViewRender(dispatch, router: Router) {   
+    router.addEffect(eff =>
+        eff.whenAction(TAB_CLICK)
             .mergeMap(action => {
-                console.log(action);
+                console.log('formExample....',action);
                 return empty();
             })
     )

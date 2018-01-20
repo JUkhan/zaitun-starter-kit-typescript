@@ -10,8 +10,8 @@ function init() {
     return { boxList: [] }
 }
 function afterViewRender(dispatch, router: Router) {
-    router.effect$
-        .addEffect(eff =>
+    router.
+        addEffect(eff =>
             eff.whenAction('mousemove')
                 .delay(0)
                 .mergeMap(action => {
