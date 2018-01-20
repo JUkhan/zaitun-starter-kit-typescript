@@ -67,13 +67,7 @@ function getFormOptions(): FormOptions {
         labelSize: 2,
         labelPos: 'left',
         title: 'Form Title',
-        inputs: [
-            {
-                type: 'button',
-                label: 'Get Form Data',
-                props: (model: any) => ({ disabled: !myForm.isValid }),
-                on: { click: ev => console.log(myForm.getFormData()) }
-            },
+        inputs: [            
             [{
                 field: 'name', //autofocus: true,               
                 label: 'Adress',
@@ -203,7 +197,13 @@ function getFormOptions(): FormOptions {
                         ]
                     }
                 }
-            }
+            },
+            {
+                type: 'button',
+                label: 'Submit',
+                props: (model: any) => ({ disabled: !myForm.isValid }),
+                on: { click: ev => console.log(myForm.getFormData()) }
+            },
 
         ]
 
