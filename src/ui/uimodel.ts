@@ -89,8 +89,7 @@ export interface Column {
     editPer?: (row: any, rowIndex:number) => boolean;
     tnsValue?: (value: any) => any;
     cellRenderer?:(row, ri)=>VNode;
-    hide?:boolean;
-    reverse?:boolean;
+    hide?:boolean;    
     comparator?:(a:any, b:any)=>number;
     props?: { [key: string]: string }
     valueProp?:string; //select value prop
@@ -99,13 +98,16 @@ export interface Column {
 export interface Pager {
     pageSize?: number;
     linkPages?: number;
-    enablePowerPage?: number;
-    nav?: number;
-    search?: number; pagerInfo?: number;
-    elmSize?: 'sm' | 'lg';
-    sspFn?:Function;
+    enablePowerPage?: boolean;
+    nav?: boolean;
+    search?: boolean;
+    pagerInfo?: boolean;
+    elmSize?: 'sm' | 'lg';   
+   
 }
 export interface GridOptions {
+    serverSidePagingFn?:(params:any)=>Promise<{totalRecords:number, data:any[]}>;
+    searchFn?:(data:any[], val:any)=>any[];
     keyProp?:string;
     dataNotFound?:string;
     dataNotFoundCssClass?:string;

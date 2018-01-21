@@ -9,17 +9,17 @@ class juPage {
     data = [];
     _cachedData = [];
     pageChange = null;
-    _prevActivePage = 0;
+    protected _prevActivePage = 0;
     diffPageAction = false;
     powerList = [];
     powerListBW = [];
-    _pbdiff = 20;
-    _pbtimes = 5;
+    protected _pbdiff = 20;
+    protected _pbtimes = 5;
     searchText = '';
     dispatch:Dispatch;
     model:any;
     totalPage:number;
-    _sort;
+    protected _sort;
     constructor() {
 
     }
@@ -107,6 +107,7 @@ class juPage {
         this.firePageChange();
     }
     firePageChange() {
+       
         this.diffPageAction = this.activePage !== this._prevActivePage;
         this._prevActivePage = this.activePage;
         if (this.sspFn) {

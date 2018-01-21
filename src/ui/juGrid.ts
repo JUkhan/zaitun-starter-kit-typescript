@@ -23,6 +23,7 @@ class juGrid{
     view({model, dispatch}){
         this.dispatch=dispatch;
         this.model=model; 
+        
         if(this._isUndef(model.columns)){
             return h('div','columns undefined');
         }
@@ -36,8 +37,8 @@ class juGrid{
                 }
             }
         });
-        if(this._isUndef(model.aews)){
-            model.aews=true;
+        if(this._isUndef(model.allowEmptySelection)){
+            model.allowEmptySelection=true;
         }
         this._initPaager(model);
         const table=h('table.table'+(this.model.tableClass||''), [
@@ -69,7 +70,7 @@ class juGrid{
         }       
         
     }
-    protected _initPaager(model){
+    protected _initPaager(model:GridOptions){
         if(this._isUndef(model.pager)){
             model.pager=this.pager.init();
         }
@@ -80,11 +81,12 @@ class juGrid{
         if(this._isUndef(model.pager.nav)){
             model.pager.nav=true;
         }
-        if(typeof model.pager.sspFn==='function'){
-            this.pager.sspFn=model.pager.sspFn;
+        if(typeof model.serverSidePagingFn==='function'){
+            this.pager.sspFn=model.serverSidePagingFn;
         }
-        if(this._isUndef(model.pager.searchFn)){
-           model.pager.searchFn=(data, val)=>{
+        
+        if(this._isUndef(model.searchFn)){
+            model.searchFn=model.pager['searchFn']=(data, val)=>{
                 const res=[], columns=this.model.columns, len=columns.length;
                 data.forEach((item) =>
                 {
@@ -99,7 +101,7 @@ class juGrid{
                 });
                 return res;
            };
-        }
+        }else model.pager['searchFn']=model.searchFn;
     }
     protected _pageChange(data){
        this.data=data;
@@ -121,28 +123,28 @@ class juGrid{
     }
     protected _sort(col:Column){
        if(!col.sort)return;       
-        col.reverse = !(col.reverse === undefined ? true : col.reverse);
+        col['reverse'] = !(col['reverse'] === undefined ? true : col['reverse']);
         this.model.columns.forEach(_ =>
         {
             if (_ !== col)
             {
-                _.reverse = undefined;
+                _['reverse'] = undefined;
             }
         });        
-        const reverse = !col.reverse ? 1 : -1, sortFn = typeof col.comparator === 'function' ?
+        const reverse = !col['reverse'] ? 1 : -1, sortFn = typeof col.comparator === 'function' ?
             (a, b) => reverse * col.comparator(a, b) :
             function (a:string, b:string) { return a = a[col.field].toString(), b = b[col.field].toString(), reverse * a.localeCompare(b); };
         if(!this.pager.sspFn){
             this.pager.data.sort(sortFn);
         }
         this._sort_action=true;
-        this.pager.sort(col.field,col.reverse);
+        this.pager.sort(col.field,col['reverse']);
       
     }
     protected _sortIcon(colDef:Column)
     {
-        const hidden = colDef.reverse === undefined;
-        return { 'fa-sort': hidden, 'not-active': hidden, 'fa-caret-up': colDef.reverse === false, 'fa-caret-down': colDef.reverse === true }; 
+        const hidden = colDef['reverse'] === undefined;
+        return { 'fa-sort': hidden, 'not-active': hidden, 'fa-caret-up': colDef['reverse'] === false, 'fa-caret-down': colDef['reverse'] === true }; 
     }
     protected _header(model){
         if(model.hideHeader){
@@ -544,7 +546,7 @@ class juGrid{
     removeRow(row){        
         var index=this.data.indexOf(this.selectedRow);        
         this.data.splice(index, 1)
-        if(typeof this.model.pager.sspFn!=='function'){  
+        if(typeof this.model.serverSidePagingFn!=='function'){  
             const inx=this.pager.data.indexOf(this.selectedRow);          
             this.pager.data.splice(inx, 1);
             if(this.model.pager.search && this.pager.data.length!==this.pager._cachedData.length){               
@@ -562,7 +564,7 @@ class juGrid{
     addRow(row){
         var index=this.data.indexOf(this.selectedRow);
         this.data.splice(index+1, -1, row);
-        if(typeof this.model.pager.sspFn!=='function'){ 
+        if(typeof this.model.serverSidePagingFn!=='function'){ 
             const inx=this.pager.data.indexOf(this.selectedRow)+1;           
             this.pager.data.splice(inx, -1, row);
             if(this.model.pager.search && this.pager.data.length!==this.pager._cachedData.length){               
