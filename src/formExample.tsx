@@ -14,8 +14,9 @@ import Counter from './counter';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/from';
-import { empty } from 'rxjs/observable/empty';
+//import { empty } from 'rxjs/observable/empty';
 import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import { Validators } from './ui/Validators'
@@ -75,13 +76,10 @@ function loadCountryInfo(countryName) {
 function afterViewRender(dispatch, router: Router) {
     router.addEffect(eff =>
         eff.whenAction(FORM_VALUE_CHANGED)
-            .switchMap(action => {
-                if (action.payload.field.field === 'country') {
-                    return loadCountryInfo(action.payload.value)
-                        .map(data => map_select_data_Action(action.dispatch, 'countryInfo', data));
-                }
-                return empty();
-            })
+            .filter(action=>action.payload.field.field === 'country')
+            .switchMap(action =>  loadCountryInfo(action.payload.value)
+                        .map(data => map_select_data_Action(action.dispatch, 'countryInfo', data))                
+            )
     );
 
     const fdata = myForm.getFormData();
