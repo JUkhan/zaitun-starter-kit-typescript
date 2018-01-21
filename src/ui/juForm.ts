@@ -52,13 +52,11 @@ class juForm {
     }
     update(model, action: Action) {
         switch (action.type) {
-            case FORM_VALUE_CHANGED:
-                console.log(action.payload);
+            case FORM_VALUE_CHANGED:                
                 let data = { ...model.data };
                 this._setValueToObj(data, action.payload.field.field, action.payload.value);
                 return { ...model, data };
-            case TAB_CLICK:
-                console.log(action.payload);
+            case TAB_CLICK:               
                 return model;
             case SELECT_DATA_ACTION:           
             this.setSelectData(action.payload.fieldName, action.payload.data);
@@ -79,9 +77,9 @@ class juForm {
     }
     protected modalClose() {
         if (typeof this.options.modalClose === 'function') {
-            this.options.modalClose() && this.showModal(false);
+            this.options.modalClose() && this.showModal({show:false});
         } else {
-            this.showModal(false);
+            this.showModal({show:false});
         }
     }
     protected _createModal(vnodes, id) {
@@ -719,9 +717,10 @@ class juForm {
     }
     public refresh() {
         this.dispatch({ type: OPTIONS_CHANGED });
-    }
-    public showModal(isOpen: boolean = true) {
-        if (isOpen) $('#' + this.modalId).modal({ backdrop: false, show: true });
+    }    
+    public showModal(options:{[key:string]:any}={show:true}) {
+        options={ backdrop: false, ...options }
+        if (options.show) $('#' + this.modalId).modal(options);
         else $('#' + this.modalId).modal('hide');
     }
     public setSelectData(fieldName, data) {
@@ -741,6 +740,11 @@ class juForm {
     public get isValid(): boolean {
         return Object.keys(this.validation_followup)
             .find(key => !this.validation_followup[key]) === undefined;
+    }
+    public onDestroy(){
+        if(this.options.viewMode==='modal'){
+            $('#' + this.modalId).modal('dispose');
+        }
     }
 }
 

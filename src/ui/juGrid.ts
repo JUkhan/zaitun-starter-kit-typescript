@@ -1,16 +1,21 @@
-import {h} from 'zaitun';
+import {h, Dispatch} from 'zaitun';
 import {juPage} from './juPager';
 import {s4} from './utils';
-const DATA_CHANGE=Symbol('SET_DATA');
+import {GridOptions, Column} from './uimodel';
+//const DATA_CHANGE=Symbol('SET_DATA');
 const PAGER_ACTION=Symbol('pager_action');
 const REFRESH=Symbol('REFRESH');
 
-class juGrid{  
+class juGrid{ 
+    data=[];
+    pager=new juPage();
+    __loaded=false;
+    __id=s4();
+    dispatch:Dispatch;
+    model:GridOptions;
+    _sort_action:boolean;
     constructor(){
-        this.data=[];
-        this.pager=new juPage();
-        this.__loaded=false;
-        this.__id=s4(); 
+        
     }   
     init(){
         return {};
@@ -64,7 +69,7 @@ class juGrid{
         }       
         
     }
-    _initPaager(model){
+    protected _initPaager(model){
         if(this._isUndef(model.pager)){
             model.pager=this.pager.init();
         }
@@ -96,7 +101,7 @@ class juGrid{
            };
         }
     }
-    _pageChange(data){
+    protected _pageChange(data){
        this.data=data;
        if(this.pager.diffPageAction){
             this.selectedRows=[];
@@ -105,7 +110,7 @@ class juGrid{
            this.model.pageChange(data);
        }
     }
-    _getPager(pagerModel, dispatch, pos){
+    protected _getPager(pagerModel, dispatch, pos){
         if(this.model.hidePager){
             return '';
         }       
@@ -114,7 +119,7 @@ class juGrid{
         }
         return '';
     }
-     _sort(col){
+    protected _sort(col:Column){
        if(!col.sort)return;       
         col.reverse = !(col.reverse === undefined ? true : col.reverse);
         this.model.columns.forEach(_ =>
@@ -126,7 +131,7 @@ class juGrid{
         });        
         const reverse = !col.reverse ? 1 : -1, sortFn = typeof col.comparator === 'function' ?
             (a, b) => reverse * col.comparator(a, b) :
-            function (a, b) { return a = a[col.field], b = b[col.field], reverse * ((a > b) - (b > a)); };
+            function (a:string, b:string) { return a = a[col.field].toString(), b = b[col.field].toString(), reverse * a.localeCompare(b); };
         if(!this.pager.sspFn){
             this.pager.data.sort(sortFn);
         }
@@ -134,12 +139,12 @@ class juGrid{
         this.pager.sort(col.field,col.reverse);
       
     }
-    _sortIcon(colDef)
+    protected _sortIcon(colDef:Column)
     {
         const hidden = colDef.reverse === undefined;
         return { 'fa-sort': hidden, 'not-active': hidden, 'fa-caret-up': colDef.reverse === false, 'fa-caret-down': colDef.reverse === true }; 
     }
-    _header(model){
+    protected _header(model){
         if(model.hideHeader){
             return '';
         }
@@ -148,16 +153,16 @@ class juGrid{
                 h('tr',model.columns.filter(col=>!col.hide).map((col, index)=>h('th'+(col.hClass||''),{key:this.__id+index, on:{click:()=>this._sort(col)}}, [col.sort?h('i.fa',{class:this._sortIcon(col)}):'',col.header])))
             ])
     }    
-    _body(model){
+    protected _body(model){
         if(!this.data.length){
             return h('tbody',[h('tr',[
-                h('td.table-info',{props:{colSpan:model.columns.length}},'Data not found')
+                h('td'+(model.dataNotFoundCssClass||'.table-active'),{props:{colSpan:model.columns.length}},model.dataNotFound||'Data not found')
             ])]);
         }
         this._refreshSelectedRows(model);
         return this._defaultView(model);
     }
-    _refreshSelectedRows(model){        
+    protected _refreshSelectedRows(model){        
         if(model.multiSelect){
             this.selectedRow={};
             const sdata=this.data.filter(_=>_.selected);
@@ -173,16 +178,16 @@ class juGrid{
             
         }
     }
-    _defaultView(model){
+    protected _defaultView(model:GridOptions){
         const columns=model.columns.filter(col=>!col.hide);
         return h('tbody',
             this.data.map((row, ri)=>h('tr',{
-                key:ri,
+                key:row[model.keyProp]||ri,
                 on:this._rowBindEvents(row, ri, model),
                 style:this._bindStyle(row, ri, model),
                 class:this._bindClass(row, ri, model)},
                 columns.map((col, ci)=>h('td', {
-                    key:ci,
+                    key:ri+ci,
                     on:this._bindEvents(row, ri, col),
                     style:this._bindStyle(row, ri, col),
                     class:this._bindClass(row, ri, col),
@@ -191,13 +196,13 @@ class juGrid{
             ))
         );
     }
-    _isUndef(p){
+    protected _isUndef(p){
         return p===undefined;
     }
-    _check_apply_editable_when_selected(row){
-        return this.model.aews?row.selected:row.editable;
+    protected _check_apply_editable_when_selected(row){
+        return this.model.editPer?row.selected:row.editable;
     }
-    _cellValue(row, col, ri){       
+    protected _cellValue(row:any, col:Column, ri:number){       
         if(typeof col.cellRenderer==='function'){
             return  [col.cellRenderer(row, ri)];
         }
@@ -211,16 +216,21 @@ class juGrid{
                 case 'select':
                     const data=col[col.field+'_data']||[];
                     return this._check_apply_editable_when_selected(row)?
-                    [h('select',{
+                    h('select',{
                        hook:{insert:vnode=>this._focus(col, vnode.elm)},
                        on:this._bindInputEvents(row, ri, col, col.iopts, 'change'),
                        style:this._bindStyle(row, ri, col.iopts),
                        class:this._bindClass(row, ri, col.iopts),
                        props:{...this._bindProps(row, ri, col.iopts), value:row[col.field]}
                     },
-                    data.map(d=>h('option',{props:{value:d[col.valueProp]}}, d[col.textProp]))
-                    )
-                    ]
+                    data.map(d=>h('option',{
+                        key:d[col.valueProp],
+                        props:{
+                            value:d[col.valueProp],
+                            selected:row[col.field].toString()===d[col.valueProp].toString()
+                        }
+                    }, d[col.textProp]))
+                    )                    
                     :this._transformValue(row[col.field], row, col)
                 case 'checkbox':
                 return this._check_apply_editable_when_selected(row)?
@@ -248,7 +258,7 @@ class juGrid{
         }
         return this._transformValue(row[col.field], row, col, ri);        
     }
-    _getSelectText(col, val){        
+    protected _getSelectText(col, val){        
         const data=col[col.field+'_data'];
         if(this._isUndef(val)){
             val='';
@@ -262,14 +272,14 @@ class juGrid{
         }
         return val;
     }
-    _transformValue(val, row, col, ri){
+    protected _transformValue(val, row, col, ri=-1){
         if(col.type==='select'){
             return typeof col.tnsValue==='function'?col.tnsValue(val, row, ri)
             :this._getSelectText(col, val)
         }
         return typeof col.tnsValue==='function'?col.tnsValue(val, row, ri):val
     }
-    _recordUpdate(row, col, ri, ev){        
+    protected _recordUpdate(row, col, ri, ev){        
         if(col.type==='checkbox'){
             row[col.field]=ev.target.checked;            
         }else{
@@ -279,12 +289,12 @@ class juGrid{
             this.model.recordChange(row, col, ri, ev);
         }
     } 
-    _focus(col, elm){
+    protected _focus(col, elm){
         if(col.focus){
             elm.focus();
         }
     }
-    _rowBindEvents(row, ri, reciver){
+    protected _rowBindEvents(row, ri, reciver){
         let events={}, has_click_evt=false;        
         if(typeof reciver.on==='object'){ 
             if(reciver.on['click'] && (reciver.singleSelect||reciver.multiSelect)){has_click_evt=true;}           
@@ -307,7 +317,7 @@ class juGrid{
         }
         return events;
     } 
-     _bindEvents(row, ri, reciver){
+    protected _bindEvents(row, ri, reciver){
         if(typeof reciver.on==='object'){ 
             let events={};                     
             for(let ename in reciver.on){
@@ -321,7 +331,7 @@ class juGrid{
         }        
         return undefined;
     }    
-    _bindInputEvents(row, ri, col, reciver, recChngeEvName){
+    protected _bindInputEvents(row, ri, col, reciver, recChngeEvName){
         let events={}, has_input_evt=false; 
         if(typeof reciver.on==='object'){
             if(reciver.on[recChngeEvName]){has_input_evt=true;}              
@@ -345,17 +355,17 @@ class juGrid{
        return events;
     }
     selectedRows=[];
-    selectedRow={};
-    _select_row(row, ri, ev){        
-        if(this.model.singleSelect && !this.model.aes && row===this.selectedRow){
+    selectedRow:any={};
+    protected _select_row(row, ri, ev){        
+        if(this.model.singleSelect && !this.model.allowEmptySelection && row===this.selectedRow){
             return;
         }
-        var is_not_refresh= false, xlen=-1; 
+        var /*is_not_refresh= false,*/ xlen=-1; 
         if(this.model.singleSelect){ 
             if(row!==this.selectedRow){
                 this.selectedRow.selected=false;
             }
-            row.selected=this.model.aes?!row.selected:true;           
+            row.selected=this.model.allowEmptySelection?!row.selected:true;           
             this.selectedRow=row;
             if(row.selected){
                 this._selectedRowsCallback(this.selectedRow, ri, ev); 
@@ -364,7 +374,7 @@ class juGrid{
            const frow=this.selectedRows.find(r=>r===row); 
                   
              if(frow){
-                if(this.model.aes){
+                if(this.model.allowEmptySelection){
                    if(ev.ctrlKey){
                         frow.selected=false;
                         this.selectedRows=this.selectedRows.filter(r=>r!==row);                   
@@ -381,7 +391,7 @@ class juGrid{
                      row.selected=true;
                      xlen= this.selectedRows.length;
                      this.selectedRows=[row];
-                     is_not_refresh=true;
+                     /*is_not_refresh=true;*/
                 }
              }else{
                   row.selected=true;
@@ -401,12 +411,12 @@ class juGrid{
             this.refresh();
         }     
     }
-    _selectedRowsCallback(rows, ri, ev){ 
+    protected _selectedRowsCallback(rows, ri=-1, ev=null){ 
         if(typeof this.model.selectedRows === 'function'){
             this.model.selectedRows(rows, ri, ev);
         }
     }
-    _bindClass(row, ri, reciver){
+    protected _bindClass(row, ri, reciver){
         if(typeof reciver.class === 'function'){
             const classObj= reciver.class(row, ri);
             if(reciver.singleSelect||reciver.multiSelect){
@@ -422,13 +432,13 @@ class juGrid{
         }
        
     }
-    _bindStyle(row, ri, reciver){
+    protected _bindStyle(row, ri, reciver){
         return typeof reciver.style === 'function'?reciver.style(row, ri):reciver.style
     }
-    _bindProps(row, ri, reciver){
+    protected _bindProps(row, ri, reciver){
         return typeof reciver.props === 'function'?reciver.props(row, ri):reciver.props||{}
     }
-    _Extraheaders(model){
+    protected _Extraheaders(model){
         if(!model.headers){
             return [];
         }
@@ -443,7 +453,7 @@ class juGrid{
             ));
        
     }
-    _footer(model){
+    protected _footer(model){
         if(!model.footers||model.hideFooter){
             return '';
         }
@@ -459,7 +469,7 @@ class juGrid{
             ))
         );
     }
-     _footerCellValue(col, ri){       
+    protected _footerCellValue(col, ri){       
         if(typeof col.cellRenderer==='function'){
             if(!this.model.hidePager && !this.pager.sspFn){
                 return  [col.cellRenderer(this.pager.data||[], this.data||[], ri)];
@@ -488,7 +498,7 @@ class juGrid{
         if(colId){     
             this.model.columns.forEach(col=>{col.focus=col.id===colId;});
         }
-        return this.select(rowIndex);
+        //return this.select(rowIndex);
     }
     setData(data){
         if(this.model.hidePager){

@@ -19,7 +19,8 @@ function init() {
             { path: 'page3/5/My favourite fruits', text: 'page3' },
             { path: 'counter', text: 'Counter' },
             { path: 'parent', text: 'Parent' },
-            { path: 'form', text: 'Form Examples' }
+            { path: 'form', text: 'Form Examples' },
+            { path: 'grid', text: 'Grid Examples' }
         ]
     };
 }

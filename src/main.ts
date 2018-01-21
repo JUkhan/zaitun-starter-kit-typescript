@@ -56,6 +56,10 @@ const routes: RouteOptions[] = [
         path: 'form', cache:true,
         loadEffects: [() => System.import('./counterEffect')],
         loadComponent: () => System.import('./formExample')
+    },
+    {
+        path: 'grid',
+        loadComponent: () => System.import('./gridExample')
     }
 ];
 
