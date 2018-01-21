@@ -613,32 +613,52 @@ class juForm {
     }
     protected _findTab(items, tabName) {
         for (let item of items) {
-            if (Array.isArray(item)) {
-                const res = this._findTab(item, tabName);
-                if (res) { return res; }
-            }
-            else if (item.type === 'tabs' && typeof item.tabs === 'object') {
+            if (item.type === 'tabs' && typeof item.tabs === 'object') {
                 const find = item.tabs[tabName];
                 if (find) { return [find, item]; }
             }
+            else if (Array.isArray(item)) {
+                const res = this._findTab(item, tabName);
+                if (res) { return res; }
+            }
+            else if (Array.isArray(item.inputs)) {
+                const res = this._findTab(item.inputs, tabName);
+                if (res) { return res; }
+            }
+             
         }
         return null;
     }
     protected _findField(items, fieldName) {
         for (let item of items) {
-            if (Array.isArray(item)) {
+            
+            if (item.field === fieldName) {
+                return item;
+            }
+            else if (Array.isArray(item)) {
                 const res = this._findField(item, fieldName);
                 if (res) { return res; }
             }
-            else if (item.field === fieldName) {
-                return item;
-            }
             else if (item.type === 'tabs' && typeof item.tabs === 'object') {
-                Object.keys(item.tabs).forEach(key => {
+                Object.keys(item.tabs).forEach(key => { 
+
                     if (item.tabs[key].field === fieldName) {
                         return item.tabs[key];
                     }
+                    else if (Array.isArray(item.tabs[key])) {
+                        const res = this._findField(item.tabs[key], fieldName);
+                        if (res) { return res; }
+                    }
+                    else if (Array.isArray(item.tabs[key].inputs)) {
+                        const res = this._findField(item.tabs[key].inputs, fieldName);
+                        if (res) { return res; }
+                    }
+
                 });
+            }
+            else if (Array.isArray(item.inputs)) {
+                const res = this._findField(item.inputs, fieldName);
+                if (res) { return res; }
             }
         }
         return null;

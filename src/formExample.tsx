@@ -83,7 +83,7 @@ function afterViewRender(dispatch, router: Router) {
                 return empty();
             })
     );
-    
+
     const fdata = myForm.getFormData();
     if (fdata.country) {
         loadCountryInfo(fdata.country)
@@ -119,7 +119,8 @@ function getFormOptions(): FormOptions {
                 props: { maxLength: 10, placeholder: '00/00/0000' },
                 type: 'date',
                 size: 4
-            }],
+            }],           
+            
             [{
                 field: 'country',
                 label: 'Country',
