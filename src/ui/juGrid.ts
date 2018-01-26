@@ -38,7 +38,7 @@ class juGrid{
             }
         });
         if(this._isUndef(model.allowEmptySelection)){
-            model.allowEmptySelection=true;
+            model.allowEmptySelection=false;
         }
         this._initPaager(model);
         const table=h('table.table'+(this.model.tableClass||''), [
