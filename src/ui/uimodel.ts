@@ -122,7 +122,7 @@ export interface GridOptions {
     allowEmptySelection?: boolean; // --default false
     pagerPos?: 'top' | 'bottom' | 'both', // --default both
     pageChange?: (data: any) => void;
-    singleSelect?: true;
+    singleSelect?: boolean;
     multiSelect?: boolean;
     selectedRows?: (rows: any, ri: number, ev: any) => void;
     editPer?: boolean; // - default true 

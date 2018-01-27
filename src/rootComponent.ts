@@ -20,7 +20,7 @@ function init() {
             { path: 'counter', text: 'Counter' },
             { path: 'parent', text: 'Parent' },
             { path: 'form', text: 'Form Examples' },
-            { path: 'grid', text: 'Grid Examples' }
+            { path: 'grid', text: 'Grid Examples' }           
         ]
     };
 }

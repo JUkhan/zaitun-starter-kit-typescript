@@ -60,7 +60,8 @@ const routes: RouteOptions[] = [
     {
         path: 'grid',
         loadComponent: () => System.import('./gridExample')
-    }
+    },
+    
 ];
 
 bootstrap({
@@ -68,7 +69,7 @@ bootstrap({
     mainComponent: rootCom,    
     routes: routes,
     activePath: 'page1',
-    devTool: true,
+    devTool: !true,
     cacheStrategy:'session'
 });
 

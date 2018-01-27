@@ -58,7 +58,7 @@ export default class GridExample {
                 pagerInfo: true,
                 elmSize: 'sm'
             },
-            singleSelect: true,
+            singleSelect: true,            
             selectedRows: (rows, ri, ev) => {
                 this.selectedRow = rows;
             },

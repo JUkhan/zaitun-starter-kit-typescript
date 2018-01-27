@@ -81,6 +81,10 @@ module.exports = {
         test: /\.html$/,
         loader: 'html-loader',
       },
+      {
+        test: /\.worker\.js$/,
+        use: { loader: 'worker-loader' }
+      }
     ],
   },
   plugins: [
