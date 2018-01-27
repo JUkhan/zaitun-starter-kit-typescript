@@ -1114,3 +1114,5 @@ describe('counter test',()=>{
 })
 
 ```
+
+* If you do find any bugs feel free to open an issue [here](https://github.com/JUkhan/reactive-zaitun/issues)
