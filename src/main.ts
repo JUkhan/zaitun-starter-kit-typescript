@@ -69,7 +69,7 @@ bootstrap({
     mainComponent: rootCom,    
     routes: routes,
     activePath: 'page1',
-    devTool: !true,
+    devTool: true,
     cacheStrategy:'session'
 });
 
