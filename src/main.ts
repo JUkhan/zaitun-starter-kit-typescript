@@ -61,7 +61,10 @@ const routes: RouteOptions[] = [
         path: 'grid',
         loadComponent: () => System.import('./gridExample')
     },
-    
+    {
+        path: 'fiber',
+        loadComponent: () => System.import('./fiber/fiberExample')
+    },
 ];
 
 bootstrap({

@@ -1,5 +1,4 @@
 
-
 import Worker from 'worker-loader!./test.worker';
 
 const w=new Worker();
