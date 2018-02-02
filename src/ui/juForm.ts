@@ -225,9 +225,9 @@ class juForm {
                 }
             }
         });
-        elms.push(h('div.card', [
+        elms.push(h('div.card'+(item.tabsCssClass||''), [
             h('div.card-header', [h(`ul.nav nav-tabs card-header-tabs pull-xs-left`, lies)]),
-            h('div.card-block', tabcontents),
+            h('div.card-block'+(item.tabsBodyCssClass||''), tabcontents),
             item.footer ? h('div.card-footer',
                 this._getModalButtons(item.footer)) : ''
         ]))

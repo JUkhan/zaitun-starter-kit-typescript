@@ -224,6 +224,8 @@ function getFormOptions(): FormOptions {
             },
             {
                 type: 'tabs',
+                tabsCssClass:'.mb-4',
+                tabsBodyCssClass:'.p-4',
                 field: '',
                 footer: [
                     { label: 'ADD', type: 'button' },

@@ -35,6 +35,8 @@ export interface Field {
     elmSize?: 'sm' | 'lg';
     data?: Array<any>;
     activeTab?: string;
+    tabsCssClass?:string;
+    tabsBodyCssClass?:string;
     tabClick?: (model: any, tabName: string, preTab: string) => boolean | Promise<boolean>;
     vnode?: (model: any) => VNode;
     actionType?: string;
@@ -68,7 +70,7 @@ export interface Field {
     fileExt?: string[];
 }
 
-export interface Tab {
+export interface Tab {   
     disabled?: boolFn;
     hide?: boolFn;
     inputs?: Array<Field | Array<Field>>;
