@@ -3,10 +3,15 @@ const ctx: Worker = self as any;
 ctx.onmessage=(e:any)=>{
 
     let action=e.data;
-    console.log(action);
+    
     switch (action.type) {
-        case 'test':
-            ctx.postMessage({type:'test-res', payload:action.payload+' processed!!'})
+        case 'test':           
+            var e1 = performance.now() + 0.8, i=0;
+            while (performance.now() < e1) {
+                // Artificially long execution time.
+               i++;
+            }
+            ctx.postMessage({type:'test', payload:action.payload+' done: '+i});
           return;
         
         default:

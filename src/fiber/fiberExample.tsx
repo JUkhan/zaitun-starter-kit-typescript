@@ -1,6 +1,7 @@
 import { ViewObj, Dispatch, Action } from 'zaitun';
 import { html } from 'snabbdom-jsx';
-import { initId, SierpinskiTriangle, MOUSE_ENTER, MOUSE_LEAVE } from './triangle';
+import { initId, initTriangle, triangleDestroy, SierpinskiTriangle, MOUSE_ENTER, MOUSE_LEAVE } from './triangle';
+
 
 var containerStyle = {
     position: 'absolute',
@@ -16,7 +17,8 @@ const INTERVAL = 'interval';
 const ELAPSED = 'elapsed';
 var intervalID, animId;
 
-function init(dispatch) {
+function init(dispatch) { 
+    initTriangle();  
     return { seconds: 0, elapsed: 0, id: 0, hover: false }
 }
 function afterViewRender(dispatch: Dispatch) {
@@ -26,12 +28,13 @@ function afterViewRender(dispatch: Dispatch) {
         dispatch({ type: ELAPSED, payload: new Date().getTime() - start });
         animId=requestAnimationFrame(animate);
     }
-    animId=requestAnimationFrame(animate);
+    animId=requestAnimationFrame(animate);   
 }
 function onDestroy() {    
     triangleVDom = null;
     clearInterval(intervalID);
     cancelAnimationFrame(animId);
+    triangleDestroy();
 }
 var pm: any = {}, triangleVDom = null;
 function OptimiseTriangle(model) {

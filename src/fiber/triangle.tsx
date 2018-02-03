@@ -1,8 +1,11 @@
 import { ViewObj} from 'zaitun';
 import { html } from 'snabbdom-jsx';
 
+import {Thread} from '../worker/Thread';
+import worker from 'worker-loader!../worker/test.worker';
+
 var idCounter = 0;
-var targetSize = 25;
+var targetSize = 25, thread:Thread;
 export const MOUSE_ENTER = 'enter';
 export const MOUSE_LEAVE = 'leave';
 export const TRIANGLE= 'triangle';
@@ -18,7 +21,12 @@ var dotStyle = {
 export function initId(){    
     idCounter=0;   
 }
-
+export function initTriangle() {
+    thread=new Thread(worker, 'test');
+}
+export function triangleDestroy() {
+    thread.terminate();
+}
 function Dot({ model, dispatch }: ViewObj) {   
     var s = model.size * 1.3;
     var style = {
@@ -57,14 +65,17 @@ export function SierpinskiTriangle({ x, y, s, text, id, hover ,dispatch}) {
         return <Dot model={model} dispatch={dispatch} />
     }  
      
-    var slowDown = !true;
-    if (slowDown) {
-        var e = performance.now() + 0.8;
-        while (performance.now() < e) {
-            // Artificially long execution time.
-        }
-    }
+    // var slowDown = true;
+    // if (slowDown) {
+    //     var e = performance.now() + 0.8, i=0;
+    //     while (performance.now() < e) {
+    //         // Artificially long execution time.
+    //        i++;
+    //     }
 
+    //     console.log(i);
+    // }
+    thread.run('long run').then(console.log);
     s /= 2;
 
     return [
