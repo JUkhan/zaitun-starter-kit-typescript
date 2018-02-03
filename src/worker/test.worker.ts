@@ -11,7 +11,7 @@ ctx.onmessage=(e:any)=>{
                 // Artificially long execution time.
                i++;
             }
-            ctx.postMessage({type:'test', payload:action.payload+' done: '+i});
+            ctx.postMessage({type:'test', payload:action.payload+' res: '+i});
           return;
         
         default:

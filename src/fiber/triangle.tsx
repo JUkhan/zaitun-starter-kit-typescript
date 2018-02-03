@@ -75,7 +75,7 @@ export function SierpinskiTriangle({ x, y, s, text, id, hover ,dispatch}) {
 
     //     console.log(i);
     // }
-    thread.run('long run').then(console.log);
+    thread.run('long run input').then(console.log);
     s /= 2;
 
     return [
