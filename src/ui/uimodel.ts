@@ -92,7 +92,7 @@ export interface Column {
     'number' | 'email' | 'url' | 'checkbox' | 'radio' | 'search' | 'tel' | 'color' ;   
     editPer?: (row: any, rowIndex:number) => boolean;
     tnsValue?: (value: any) => any;
-    cellRenderer?:(row, ri, pager)=>VNode;
+    cellRenderer?:(row, ri)=>VNode;
     hide?:boolean;    
     comparator?:(a:any, b:any)=>number;
     props?: { [key: string]: string }

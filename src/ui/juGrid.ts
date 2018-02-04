@@ -206,7 +206,7 @@ class juGrid{
     }
     protected _cellValue(row:any, col:Column, ri:number){       
         if(typeof col.cellRenderer==='function'){
-            return  [col.cellRenderer(row, ri, this.pager)];
+            return  [col.cellRenderer(row, ri)];
         }
         if(col.type){
             if(typeof col.editPer==='function' && !col.editPer(row, ri)){
