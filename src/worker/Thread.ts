@@ -11,7 +11,7 @@ export class Thread {
     private addListener() {
         this.worker.onmessage = (e: any) => {
             if (e.data.type === this.messageType)
-                this.callStack.pop().resolve(e.data.payload);
+                this.callStack.pop().accept(e.data.payload);
         }
         this.worker.onerror = (e: any) => {
             if (e.data.type === this.messageType)
@@ -19,8 +19,8 @@ export class Thread {
         }
     }
     run(input: any): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            this.callStack.push({ resolve, reject });
+        return new Promise<any>((accept,reject) => {
+            this.callStack.push({ accept,reject });
             this.worker.postMessage({ type: this.messageType, payload: input });
         });
 

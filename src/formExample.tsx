@@ -100,7 +100,7 @@ function getFormOptions(): FormOptions {
         title: 'Form Title',
         inputs: [
             [{
-                field: 'name', //autofocus: true,               
+                field: 'name', autofocus: true,               
                 label: model => `Name( ${model.data.name} )`,
                 validators: [
                     Validators.required(),

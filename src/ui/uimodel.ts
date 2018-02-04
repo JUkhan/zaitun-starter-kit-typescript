@@ -1,9 +1,11 @@
 import { VNode } from 'zaitun/dom';
 
+declare type dic={ [key: string]: any };
 declare type elmFn = (model: any) => VNode;
-declare type propsFn = (model: any) => { [key: string]: any };
+declare type propsFn = (model: any) => dic;
 declare type boolFn = (model: any) => boolean;
 declare type stringFn = (model: any) => string;
+declare type rowFn=(row, i) => dic;
 
 export interface FormModel {
     data: { [key: string]: any };
@@ -83,19 +85,21 @@ export interface Column {
     field: string;
     hClass?: string,
     sort?: boolean
-    iopts?: { class?: propsFn, style?: propsFn, on?: { [key: string]: Function }, [key: string]: any },
+    iopts?: { class?: dic|propsFn, style?: dic|propsFn, on?: { [key: string]: Function }, [key: string]: any },
     focus?: boolean;
-    type: 'select' | 'text' | 'password' | 'datetime-local' |
+    type?: 'select' | 'text' | 'password' | 'datetime-local' |
     'date' | 'month' | 'time' | 'week' |
     'number' | 'email' | 'url' | 'checkbox' | 'radio' | 'search' | 'tel' | 'color' ;   
     editPer?: (row: any, rowIndex:number) => boolean;
     tnsValue?: (value: any) => any;
-    cellRenderer?:(row, ri)=>VNode;
+    cellRenderer?:(row, ri, pager)=>VNode;
     hide?:boolean;    
     comparator?:(a:any, b:any)=>number;
     props?: { [key: string]: string }
     valueProp?:string; //select value prop
     textProp?:string; //select text prop
+    style?:dic|propsFn;
+    class?:dic|propsFn;
 }
 export interface Pager {
     pageSize?: number;
@@ -130,8 +134,8 @@ export interface GridOptions {
     editPer?: boolean; // - default true 
     recordChange?: (row: any, col: any, ri: number, ev: any) => void;
     on?: { [key: string]: Function };
-    style?: (row, i) => { [key: string]: any };
-    class?: (row, i) => { [key: string]: any };
+    style?:rowFn|dic;
+    class?: rowFn|dic;
     columns:Column[];
     headers?:Array<Array<Footer>>;
     footers?:Array<Array<Footer>>;
@@ -140,7 +144,7 @@ export interface Footer {
     id?:any;
     text?: string;
     props?:{[key:string]:any}
-    cellRenderer?:(data:any)=>VNode;
+    cellRenderer?:(...args:any[])=>VNode;
     style?:propsFn;
     on?: { [key: string]: Function };
     class?: (row, i) => { [key: string]: any };

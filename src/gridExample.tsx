@@ -3,6 +3,7 @@ import { div, b } from 'zaitun/dom';
 import { html } from 'snabbdom-jsx';
 import { juGrid } from './ui/juGrid';
 import { GridOptions } from './ui/uimodel';
+import appService from './appService';
 
 export default class GridExample {
     grid: juGrid;
@@ -45,6 +46,7 @@ export default class GridExample {
         this.grid
             .addRow({ name: '', age: 16, address: '', single: false, country: '' })
             .refresh();
+            
     }
     getGridOptions(): GridOptions {
         return {
@@ -81,7 +83,11 @@ export default class GridExample {
                         cellRenderer: data =>
                             <div>
                                 <button on-click={() => this.add()}>Add <i classNames="fa fa-plus"></i></button>&nbsp;
-                            <button disabled={this.grid.data.length === 0} on-click={() => confirm('Remove sure?') && this.grid.removeRow(this.selectedRow).pager.clickPage(this.grid.pager.activePage)}>Remove <i classNames="fa fa-trash"></i></button>
+                            <button 
+                            disabled={this.grid.data.length === 0} 
+                            on-click={() => appService.confirm('Confirm', 'Remove sure?')
+                            .then(e=>e==='yes'&&this.grid.removeRow(this.selectedRow).pager.clickPage(this.grid.pager.activePage))}
+                            >Remove <i classNames="fa fa-trash"></i></button>
                             </div>
                     },
                     { props: { colSpan: 2 }, cellRenderer: d => <b>Total Selected Rows: {d.filter(_ => _.selected).length}</b> },

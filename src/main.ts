@@ -65,6 +65,10 @@ const routes: RouteOptions[] = [
         path: 'fiber',
         loadComponent: () => System.import('./fiber/fiberExample')
     },
+    {
+        path: 'dispute',
+        loadComponent: () => System.import('./dispute/disputeCom')
+    },
 ];
 
 bootstrap({

@@ -4,13 +4,34 @@ import {div, h3, nav, a, ul, li} from 'zaitun/dom';
 import 'rxjs/add/operator/mergeMap';
 import { empty } from 'rxjs/observable/empty';
 import counter from './counter';
+import appService from './appService';
+import {juForm} from './ui/juForm';
+
 
 const CHILD = Symbol('CHILD');
 const INC_AT = 'incAt';
 const DEC_AT = 'decAt';
+var popup:juForm=new juForm(); 
+
+function getPopupOptions(){
+    return {
+        viewMode:'popup',
+        title:'Popup Title',
+        name:'alert-popup',
+        size:'sm',            
+        inputs:[
+            {type:'vnode', vnode:model=>appService.msg}                                
+        ]
+    }
+}
 
 function init() {
+      
     return {
+        popup:{
+            options:getPopupOptions(),
+            data:{}
+        },
         incAt: null,
         decAt: null,
         menu: [
@@ -21,7 +42,8 @@ function init() {
             { path: 'parent', text: 'Parent' },
             { path: 'form', text: 'Form Examples' },
             { path: 'grid', text: 'Grid Examples' },
-            { path: 'fiber', text: 'Fiber Examples' }            
+            { path: 'fiber', text: 'Fiber Examples' },
+            { path: 'dispute', text: 'Dispute' }               
         ]
     };
 }
@@ -39,6 +61,7 @@ function afterChildRender(dispatch:Dispatch, router: Router) {
                 return empty();
             })
         );
+        appService.setPopup(popup);
 }
 function view({ model, dispatch, router }:ViewObj) {
     return div( [
@@ -52,7 +75,8 @@ function view({ model, dispatch, router }:ViewObj) {
                 router,
                 dispatch: action => dispatch({ type: CHILD, payload: action })
             })
-        )
+        ),
+        popup.view({model:model.popup, dispatch, router})
     ]);
 }
 

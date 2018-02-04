@@ -23,7 +23,7 @@ class juForm {
     protected dispatch: Dispatch;
     protected options: FormOptions;
     protected modalId: string;
-    protected model: any;
+    public model: any;
     protected router: Router;
     protected FILES: { [key: string]: File[] } = {};
     protected validation_followup = {};
@@ -75,7 +75,7 @@ class juForm {
         }
         return vnodes
     }
-    protected modalClose() {
+    public modalClose() {
         if (typeof this.options.modalClose === 'function') {
             this.options.modalClose() && this.showModal({show:false});
         } else {
@@ -83,8 +83,8 @@ class juForm {
         }
     }
     protected _createModal(vnodes, id) {
-        return h('div.modal', { attrs: { id: id } }, [
-            h('div.modal-dialog.modal-' + this.options.modalSize, { role: 'document' }, [
+        return h('div.modal.fade', { attrs: { id: id, tabindex:"-1", role:"dialog", 'aria-labelledby':"mySmallModalLabel", 'aria-hidden':"true"} }, [
+            h('div.modal-dialog.modal-' + this.options.modalSize, { attrs:{ role: 'document' }}, [
                 h('div.modal-content', [
                     h('div.modal-header', [
                         h('div.modal-title', this.options.title || ''),
@@ -290,8 +290,7 @@ class juForm {
             }
             else if (item.type === 'file') {
                 val = this._setFiles(item, e);
-            }
-            //this._setValueToData(item, val);
+            }            
             if (hasChange) {
                 hasChange(val, e);
             }
@@ -299,7 +298,7 @@ class juForm {
                 type: FORM_VALUE_CHANGED,
                 payload: { field: item, value: val }
             }, true);
-
+            
         };
         return events
     }
@@ -679,7 +678,7 @@ class juForm {
             if (item) { item = item[1]; }
         }
         if (item) {
-            let prevTab = item.activeTab;
+            let prevTab = item.activeTab;            
             const res = typeof item.tabClick === 'function' ?
                 item.tabClick(this.model, tabName, item.activeTab) : true;
             if (typeof res === 'boolean') {

@@ -206,7 +206,7 @@ class juGrid{
     }
     protected _cellValue(row:any, col:Column, ri:number){       
         if(typeof col.cellRenderer==='function'){
-            return  [col.cellRenderer(row, ri)];
+            return  [col.cellRenderer(row, ri, this.pager)];
         }
         if(col.type){
             if(typeof col.editPer==='function' && !col.editPer(row, ri)){
@@ -474,7 +474,7 @@ class juGrid{
     protected _footerCellValue(col, ri){       
         if(typeof col.cellRenderer==='function'){
             if(!this.model.hidePager && !this.pager.sspFn){
-                return  [col.cellRenderer(this.pager.data||[], this.data||[], ri)];
+                return  [col.cellRenderer(this.pager.data||[], this.data||[], this.pager, ri)];
             }
             return  [col.cellRenderer(this.data||[], this.pager, ri)];
         }
