@@ -43,7 +43,7 @@ function random(low, high) {
 function view({ model, dispatch }: ViewObj) {
     return <div on-mousemove={ev => dispatch({ type: 'mousemove', payload: ev }, true)}
         style={{ width: '100%', height: '400px', border: '#ddd 1px solid' }}>
-        {model.boxList.map(box => <div key={box.key} style={box.style}></div>)}
+        {model.boxList.map(box => <div key={box.key} style={box.style}></div>)}        
     </div>
 }
 

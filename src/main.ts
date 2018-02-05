@@ -12,7 +12,7 @@ function getData(routeParams: any) {
                     .fill('fruit-')
                     .map((fruit, i) => fruit + i)
             );
-        }, 1000);
+        }, 100);
     });
 }
 
@@ -69,6 +69,10 @@ const routes: RouteOptions[] = [
         path: 'dispute',
         loadComponent: () => System.import('./dispute/disputeCom')
     },
+    {
+        path: 'chart',
+        loadComponent: () => System.import('./chart')
+    },
 ];
 
 bootstrap({
@@ -77,6 +81,6 @@ bootstrap({
     routes: routes,
     activePath: 'page1',
     devTool: true,
-    cacheStrategy:'session'
+    //cacheStrategy:'session'
 });
 

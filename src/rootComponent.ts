@@ -42,8 +42,9 @@ function init() {
             { path: 'parent', text: 'Parent' },
             { path: 'form', text: 'Form Examples' },
             { path: 'grid', text: 'Grid Examples' },           
-            { path: 'dispute', text: 'Dispute' },
-            { path: 'fiber', text: 'Fiber Examples' },              
+            { path: 'dispute', text: 'Dispute' },             
+            { path: 'chart', text: 'Chart' }, 
+            { path: 'fiber', text: 'Fiber Examples' },             
         ]
     };
 }

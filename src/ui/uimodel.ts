@@ -1,11 +1,11 @@
 import { VNode } from 'zaitun/dom';
 
-declare type dic={ [key: string]: any };
+export declare type dic = { [key: string]: any };
 declare type elmFn = (model: any) => VNode;
 declare type propsFn = (model: any) => dic;
 declare type boolFn = (model: any) => boolean;
 declare type stringFn = (model: any) => string;
-declare type rowFn=(row, i) => dic;
+declare type rowFn = (row, i) => dic;
 
 export interface FormModel {
     data: { [key: string]: any };
@@ -37,8 +37,8 @@ export interface Field {
     elmSize?: 'sm' | 'lg';
     data?: Array<any>;
     activeTab?: string;
-    tabsCssClass?:string;
-    tabsBodyCssClass?:string;
+    tabsCssClass?: string;
+    tabsBodyCssClass?: string;
     tabClick?: (model: any, tabName: string, preTab: string) => boolean | Promise<boolean>;
     vnode?: (model: any) => VNode;
     actionType?: string;
@@ -72,7 +72,7 @@ export interface Field {
     fileExt?: string[];
 }
 
-export interface Tab {   
+export interface Tab {
     disabled?: boolFn;
     hide?: boolFn;
     inputs?: Array<Field | Array<Field>>;
@@ -85,21 +85,21 @@ export interface Column {
     field: string;
     hClass?: string,
     sort?: boolean
-    iopts?: { class?: dic|propsFn, style?: dic|propsFn, on?: { [key: string]: Function }, [key: string]: any },
+    iopts?: { class?: dic | propsFn, style?: dic | propsFn, on?: { [key: string]: Function }, [key: string]: any },
     focus?: boolean;
     type?: 'select' | 'text' | 'password' | 'datetime-local' |
     'date' | 'month' | 'time' | 'week' |
-    'number' | 'email' | 'url' | 'checkbox' | 'radio' | 'search' | 'tel' | 'color' ;   
-    editPer?: (row: any, rowIndex:number) => boolean;
+    'number' | 'email' | 'url' | 'checkbox' | 'radio' | 'search' | 'tel' | 'color';
+    editPer?: (row: any, rowIndex: number) => boolean;
     tnsValue?: (value: any) => any;
-    cellRenderer?:(row, ri)=>VNode;
-    hide?:boolean;    
-    comparator?:(a:any, b:any)=>number;
+    cellRenderer?: (row, ri) => VNode;
+    hide?: boolean;
+    comparator?: (a: any, b: any) => number;
     props?: { [key: string]: string }
-    valueProp?:string; //select value prop
-    textProp?:string; //select text prop
-    style?:dic|propsFn;
-    class?:dic|propsFn;
+    valueProp?: string; //select value prop
+    textProp?: string; //select text prop
+    style?: dic | propsFn;
+    class?: dic | propsFn;
 }
 export interface Pager {
     pageSize?: number;
@@ -108,16 +108,16 @@ export interface Pager {
     nav?: boolean;
     search?: boolean;
     pagerInfo?: boolean;
-    elmSize?: 'sm' | 'lg';   
-   
+    elmSize?: 'sm' | 'lg';
+
 }
 export interface GridOptions {
-    serverSidePagingFn?:(params:any)=>Promise<{totalRecords:number, data:any[]}>;
-    searchFn?:(data:any[], val:any)=>any[];
-    keyProp?:string;
-    dataNotFound?:string;
-    dataNotFoundCssClass?:string;
-    onLoad?:Function;
+    serverSidePagingFn?: (params: any) => Promise<{ totalRecords: number, data: any[] }>;
+    searchFn?: (data: any[], val: any) => any[];
+    keyProp?: string;
+    dataNotFound?: string;
+    dataNotFoundCssClass?: string;
+    onLoad?: Function;
     tableClass?: string,
     headerClass?: string;
     footerClass?: string;
@@ -134,19 +134,39 @@ export interface GridOptions {
     editPer?: boolean; // - default true 
     recordChange?: (row: any, col: any, ri: number, ev: any) => void;
     on?: { [key: string]: Function };
-    style?:rowFn|dic;
-    class?: rowFn|dic;
-    columns:Column[];
-    headers?:Array<Array<Footer>>;
-    footers?:Array<Array<Footer>>;
+    style?: rowFn | dic;
+    class?: rowFn | dic;
+    columns: Column[];
+    headers?: Array<Array<Footer>>;
+    footers?: Array<Array<Footer>>;
 }
 export interface Footer {
-    id?:any;
+    id?: any;
     text?: string;
-    props?:{[key:string]:any}
-    cellRenderer?:(...args:any[])=>VNode;
-    style?:propsFn;
+    props?: { [key: string]: any }
+    cellRenderer?: (...args: any[]) => VNode;
+    style?: propsFn;
     on?: { [key: string]: Function };
     class?: (row, i) => { [key: string]: any };
-    hide?:boolean;
+    hide?: boolean;
+}
+
+export interface PlotModel {
+    key: string;
+    data?: any;
+    layout: any,
+    config?: any,
+    style?:{traceStyle:dic, index?:number|Array<number>};
+    onLoad?:(key:string, elm:HTMLElement)=>void;
+}
+
+export interface SegmentItem{
+    name:string;
+    title:string;
+    active:boolean;
+}
+export interface SegmentModel{
+    size?:'lg'|'sm';
+    color:'primary'|'secondary'|'success'|'danger'|'warning'|'info'|'light'|'dark';
+    items:Array<SegmentItem>
 }
