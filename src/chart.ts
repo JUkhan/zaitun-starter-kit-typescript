@@ -1,7 +1,7 @@
 
 import { ViewObj, Action, Dispatch } from 'zaitun';
 import { div } from 'zaitun/dom';
-import { SegmentModel } from './ui/uimodel'
+import { SegmentModel, PlotModel } from './ui/uimodel'
 import Segment from './ui/juSegment';
 import Ploat from './ui/juPlotly';
 const SEGMENT = Symbol('segment');
@@ -31,9 +31,10 @@ function view({ model, dispatch }: ViewObj) {
 function update(model, action: Action) {
     switch (action.type) {
         case SEGMENT:
+            let graph:PlotModel=graphData(action.payload) as any;
+            graph.key=model.graph.key;
             return {
-                ...model, graph: graphData(action.payload),
-                segment: Segment.update(model.segment, action.payload)
+                graph, segment: Segment.update(model.segment, action.payload)
             };
         default:
             return model;
@@ -71,7 +72,7 @@ function crp() {
         mode: 'lines+markers'
     };
     var data = [trace1, trace2, trace3];
-    return { data, layout, config: { displayModeBar: false } }
+    return { data, layout }
 }
 function disease() {
     var layout = {
@@ -140,6 +141,6 @@ function disease() {
     };
 
     var data = [trace1, trace2];
-    return { data, layout, config: { displayModeBar: false } }
+    return { data, layout}
 }
 export default { init, view, update, afterViewRender } 
