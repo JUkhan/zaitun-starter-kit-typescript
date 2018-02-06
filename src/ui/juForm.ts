@@ -10,11 +10,11 @@ const OPTIONS_CHANGED = Symbol('OPTIONS_CHANGED');
 const FORM_VALUE_CHANGED = Symbol('form-value-change');
 const SELECT_DATA_ACTION = Symbol('Select-action');
 
-function map_select_data_Action(dispatch: Dispatch, fieldName: string, data: any[]):Action {
+function map_select_data_Action(dispatch: Dispatch, fieldName: string, data: any[]): Action {
     return {
         type: SELECT_DATA_ACTION,
-        payload: {fieldName, data},
-        dispatch:dispatch
+        payload: { fieldName, data },
+        dispatch: dispatch
     }
 
 }
@@ -47,20 +47,23 @@ class juForm {
         if (!this.options) {
             return h('div', 'juForm options is not defined');
         }
-        const vnodes = h('div.juForm', this._createElements(this.options));
+        if (typeof this.options.validationMode === 'undefined') {
+            this.options.validationMode = 'normal';
+        }
+        const vnodes = h('div.juForm', { key: this.modalId }, this._createElements(this.options));
         return this.options.viewMode === 'form' ? vnodes : this._createModal(vnodes, this.modalId);
     }
     update(model, action: Action) {
         switch (action.type) {
-            case FORM_VALUE_CHANGED:                
+            case FORM_VALUE_CHANGED:
                 let data = { ...model.data };
                 this._setValueToObj(data, action.payload.field.field, action.payload.value);
                 return { ...model, data };
-            case TAB_CLICK:               
+            case TAB_CLICK:
                 return model;
-            case SELECT_DATA_ACTION:           
-            this.setSelectData(action.payload.fieldName, action.payload.data);
-            return model;
+            case SELECT_DATA_ACTION:
+                this.setSelectData(action.payload.fieldName, action.payload.data);
+                return model;
             default:
                 return model;
         }
@@ -77,14 +80,14 @@ class juForm {
     }
     public modalClose() {
         if (typeof this.options.modalClose === 'function') {
-            this.options.modalClose() && this.showModal({show:false});
+            this.options.modalClose() && this.showModal({ show: false });
         } else {
-            this.showModal({show:false});
+            this.showModal({ show: false });
         }
     }
     protected _createModal(vnodes, id) {
-        return h('div.modal.fade', { attrs: { id: id, tabindex:"-1", role:"dialog", 'aria-labelledby':"mySmallModalLabel", 'aria-hidden':"true"} }, [
-            h('div.modal-dialog.modal-' + this.options.modalSize, { attrs:{ role: 'document' }}, [
+        return h('div.modal.fade', { key: id, attrs: { id: id, tabindex: "-1", role: "dialog", 'aria-labelledby': "mySmallModalLabel", 'aria-hidden': "true" } }, [
+            h('div.modal-dialog.modal-' + this.options.modalSize, { attrs: { role: 'document' } }, [
                 h('div.modal-content', [
                     h('div.modal-header', [
                         h('div.modal-title', this.options.title || ''),
@@ -220,14 +223,26 @@ class juForm {
                 ]));
                 //tab contents 
                 if (tabName === item.activeTab) {
-                    tabcontents.push(h(`div.tab-item`,
+                    tabcontents.push(h(`div.tab-item`, {
+                        key: tabName,
+                        hook: {
+                            insert: (node) => {
+                                if (typeof item.tabs[tabName].onInit === 'function')
+                                    item.tabs[tabName].onInit(this.dispatch);
+                            },
+                            destroy: (node) => {
+                                if (typeof item.tabs[tabName].onDestroy === 'function')
+                                    item.tabs[tabName].onDestroy(this.dispatch, this.model);
+                            }
+                        }
+                    },
                         this._createElements(item.tabs[tabName])));
                 }
             }
         });
-        elms.push(h('div.card'+(item.tabsCssClass||''), [
+        elms.push(h('div.card' + (item.tabsCssClass || ''), [
             h('div.card-header', [h(`ul.nav nav-tabs card-header-tabs pull-xs-left`, lies)]),
-            h('div.card-block'+(item.tabsBodyCssClass||''), tabcontents),
+            h('div.card-block' + (item.tabsBodyCssClass || ''), tabcontents),
             item.footer ? h('div.card-footer',
                 this._getModalButtons(item.footer)) : ''
         ]))
@@ -290,7 +305,7 @@ class juForm {
             }
             else if (item.type === 'file') {
                 val = this._setFiles(item, e);
-            }            
+            }
             if (hasChange) {
                 hasChange(val, e);
             }
@@ -298,7 +313,11 @@ class juForm {
                 type: FORM_VALUE_CHANGED,
                 payload: { field: item, value: val }
             }, true);
-            
+
+        };
+        events['blur']=e=>{
+           item['appear_validation_message']=true;
+           this.dispatch({type: 'juForm-blur'});
         };
         return events
     }
@@ -354,7 +373,7 @@ class juForm {
                 value = this._getValueFromData(item);
                 item.isValid = this._applyFieldValidation(item, value);
             }
-            elms.push(h(`div.col-md-${labelSize}`, this._getLabel(item)));
+            elms.push(h(`div.col-md-${labelSize}`, [this._getLabel(item) as any,h('span.required',this.options.validationMode==='normal'&&item.required?'*':'')]));
             elms.push(h(`div.col-md-${item.size || 4}`, item.radioList.map((el, index) => {
                 el.type = item.type;
                 el.required = item.required;
@@ -382,7 +401,10 @@ class juForm {
 
     }
     protected _createCheckboxElm(item: Field, index, inline, isValid, value) {
-        const css = item.required ? isValid ? '.is-valid' : '.is-invalid' : '';
+        let css ='';
+        if(item.type==='checkbox')
+            css=item.required ? isValid ? '.is-valid' : '.is-invalid' : '';
+        else css=this.options.validationMode==='fancy'? item.required ? isValid ? '.is-valid' : '.is-invalid' : '':'';
         return h(`div.custom-control.custom-` + item.type,
             {
                 class: { 'custom-control-inline': inline }
@@ -477,7 +499,7 @@ class juForm {
     protected _createElement(item: Field, index) {
         if (this._getBoolVal(item.hide)) return [];
         const children = [];
-        const labelPos = this.options.labelPos || item.labelPos || 'left';
+        const labelPos = item.labelPos || this.options.labelPos || 'left';
         const childrenWithLabel = [];
         const field_value = this._getValueFromData(item);
         item.isValid = this._applyFieldValidation(item, field_value);
@@ -485,7 +507,7 @@ class juForm {
             children.push(h(`label.col-form-label${item.elmSize ?
                 '.col-form-label-' + item.elmSize : ''}`,
                 { attrs: { for: item.field } },
-                this._getLabel(item)));
+                [this._getLabel(item) as any,h('span.required',this.options.validationMode==='normal'&&item.required?'*':'')]));
         }
         if (item.type === 'select') {
             children.push(this._createSelect(item, field_value));
@@ -496,12 +518,14 @@ class juForm {
         else {
             children.push(h(`input.form-control${this._getConCssClass(item)}`,
                 {
+                    key: item.field,
                     on: this._getListener(item),
                     style: this._getStyles(item.style),
                     class: this._getStyles(item.class),
                     props: {
                         type: item.type,
                         id: item.field,
+                        name: item.field,
                         autofocus: item.autofocus,
                         required: item.required,
                         value: field_value,
@@ -514,16 +538,19 @@ class juForm {
         if (item.info) {
             children.push(h('small.form-text.text-muted', item.info));
         }
-        if (!item.isValid && item.invalidFeedback && item.type !== 'file') {
-            children.push(h('div.invalid-feedback', item.invalidFeedback || ''));
+        if (!item.isValid && item.invalidFeedback && item.type !== 'file' && this.options.validationMode==='fancy') {
+            children.push(h('div.invalid-feedback',item.invalidFeedback));
         }
-
+        else if(item['appear_validation_message'] && !item.isValid && item.invalidFeedback ){
+            children.push(h('small.form-text..alert.alert-danger', item.invalidFeedback));
+        }      
         if (labelPos === 'left' && item.label) {
             const labelSize = item.labelSize || this.options.labelSize || 2;
+
             childrenWithLabel.push(h(`label.col-form-label${item.elmSize ?
                 '.col-form-label-' + item.elmSize : ''}${'.col-md-' + labelSize}`,
                 { attrs: { for: item.field } },
-                this._getLabel(item)));
+                [this._getLabel(item) as any,h('span.required',this.options.validationMode==='normal'&&item.required?'*':'')]));
         }
         childrenWithLabel.push(h(`div.col-md-${item.size || 4}`, children));
         return childrenWithLabel;
@@ -539,8 +566,11 @@ class juForm {
 
     }
     protected _getConCssClass(item: Field) {
-        var css = item.isValid ? '.is-valid' : '.is-invalid';
-        return css;
+        if (this.options.validationMode === 'fancy') {
+            var css = item.isValid ? '.is-valid' : '.is-invalid';
+            return css;
+        }
+        return '';
     }
     protected _createSelect(item: Field, field_value) {
         if (!item.data) item.data = [];
@@ -573,6 +603,7 @@ class juForm {
                     multiple: item.multiSelect,
                     required: item.required,
                     id: item.field,
+                    name: item.field,
                     ...this._bindProps(item)
                 }
             },
@@ -622,13 +653,13 @@ class juForm {
                 const res = this._findTab(item.inputs, tabName);
                 if (res) { return res; }
             }
-             
+
         }
         return null;
     }
     protected _findField(items, fieldName) {
         for (let item of items) {
-            
+
             if (item.field === fieldName) {
                 return item;
             }
@@ -637,7 +668,7 @@ class juForm {
                 if (res) { return res; }
             }
             else if (item.type === 'tabs' && typeof item.tabs === 'object') {
-                Object.keys(item.tabs).forEach(key => { 
+                Object.keys(item.tabs).forEach(key => {
 
                     if (item.tabs[key].field === fieldName) {
                         return item.tabs[key];
@@ -678,7 +709,7 @@ class juForm {
             if (item) { item = item[1]; }
         }
         if (item) {
-            let prevTab = item.activeTab;            
+            let prevTab = item.activeTab;
             const res = typeof item.tabClick === 'function' ?
                 item.tabClick(this.model, tabName, item.activeTab) : true;
             if (typeof res === 'boolean') {
@@ -716,9 +747,9 @@ class juForm {
     }
     public refresh() {
         this.dispatch({ type: OPTIONS_CHANGED });
-    }    
-    public showModal(options:{[key:string]:any}={show:true}) {
-        options={ backdrop: false, ...options }
+    }
+    public showModal(options: { [key: string]: any } = { show: true }) {
+        options = { backdrop: false, ...options }
         if (options.show) $('#' + this.modalId).modal(options);
         else $('#' + this.modalId).modal('hide');
     }
@@ -740,11 +771,11 @@ class juForm {
         return Object.keys(this.validation_followup)
             .find(key => !this.validation_followup[key]) === undefined;
     }
-    public onDestroy(){
-        if(this.options.viewMode==='modal'){
+    public onDestroy() {
+        if (this.options.viewMode === 'modal') {
             $('#' + this.modalId).modal('dispose');
         }
     }
 }
 
-export { juForm, TAB_CLICK, FORM_VALUE_CHANGED,SELECT_DATA_ACTION, map_select_data_Action }
+export { juForm, TAB_CLICK, FORM_VALUE_CHANGED, SELECT_DATA_ACTION, map_select_data_Action }

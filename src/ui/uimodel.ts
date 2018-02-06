@@ -1,4 +1,5 @@
 import { VNode } from 'zaitun/dom';
+import {Dispatch} from 'zaitun';
 
 export declare type dic = { [key: string]: any };
 declare type elmFn = (model: any) => VNode;
@@ -13,7 +14,8 @@ export interface FormModel {
 }
 
 export interface FormOptions {
-    viewMode: 'form' | 'modal'
+    viewMode: 'form' | 'modal';
+    validationMode?:'normal'|'fancy'; // 'normal' is default
     name: string;
     labelSize?: number;
     labelPos?: 'left' | 'top';
@@ -75,6 +77,8 @@ export interface Field {
 export interface Tab {
     disabled?: boolFn;
     hide?: boolFn;
+    onInit?:(dispatch:Dispatch)=>void;
+    onDestroy?:(dispatch:Dispatch, model:any)=>void;
     inputs?: Array<Field | Array<Field>>;
 }
 

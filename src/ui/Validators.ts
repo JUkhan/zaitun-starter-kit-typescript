@@ -18,7 +18,7 @@ export class Validators {
             if(!val){return true;}
             field.invalidFeedback=message || `Enter a value greater than or equal to ${limit}`;
             val = isNaN(val)?0:Number(val);
-            return !(val<= limit);
+            return !(val< limit);
         }
     }
     static maxNumber(limit: number, message?: string): Function {
@@ -26,7 +26,7 @@ export class Validators {
             if(!val){return true;}
             field.invalidFeedback=message || `Enter a value less than or equal to ${limit}`
             val = isNaN(val)?0:Number(val);
-           return !(val >= limit);
+           return !(val > limit);
         }
     }
     static minLength(limit: number, message?: string): Function {

@@ -1,5 +1,5 @@
 
-import { ViewObj, Action, Router } from 'zaitun';
+import { ViewObj, Action, Router, Dispatch } from 'zaitun';
 import { div } from 'zaitun/dom';
 
 import { FormOptions } from './ui/uimodel';
@@ -245,6 +245,12 @@ function getFormOptions(): FormOptions {
                 },
                 tabs: {
                     'Tab1': {
+                        onInit:(dispatch:Dispatch)=>{
+                            console.log('Tab1-init');
+                        },
+                        onDestroy:(dispatch:Dispatch, model)=>{
+                            console.log('Tab1-destroy', model);
+                        },
                         inputs: [
                             {
                                 field: 'age',
