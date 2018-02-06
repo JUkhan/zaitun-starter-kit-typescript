@@ -4,6 +4,7 @@ var webpack = require ('webpack');
 var basePath = __dirname;
 var ExtractTextPlugin = require ('extract-text-webpack-plugin');
 var {CheckerPlugin} = require ('awesome-typescript-loader');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   context: path.join (basePath, 'src'),
@@ -97,6 +98,9 @@ module.exports = {
       names: ['vendor', 'manifest'],
     }),
     new webpack.HashedModuleIdsPlugin (),
-    new CheckerPlugin (),
+    new CheckerPlugin (),    
+    new CopyWebpackPlugin([
+      {from:'assets', to:'assets'}       
+    ])
   ],
 };
