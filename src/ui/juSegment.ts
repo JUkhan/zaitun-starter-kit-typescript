@@ -7,7 +7,7 @@ const SEGMENT_CHANGE = Symbol('segment-change');
 
 function view({ model, dispatch }: ViewObj) {
     return div([
-        div('.row', model.items.map(item=>
+        div('.juSegment.row', model.items.map(item=>
             div('.col',{key:item.name},
             button('.btn.btn-block'+(model.size?'.btn-'+model.size:''),
             {

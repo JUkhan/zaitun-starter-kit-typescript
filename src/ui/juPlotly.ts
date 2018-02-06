@@ -18,14 +18,14 @@ function view({ model, dispatch }: ViewObj) {
         key: model.key, diff: model,
         hook: {
             insert: (node: VNode) => {
-                console.log('insert', node);                
+                //console.log('insert', node);                
                 draw(node.elm, model);
                 if (typeof node.data.diff.onLoad === 'function')
                     node.data.diff.onLoad(node.elm);
                
             },
             update: (oldnode: VNode, node: VNode) => {
-                console.log('update', node);
+                //console.log('update', node);
                 let oldModel: PlotModel = oldnode.data.diff;
                 if (oldModel.data !== node.data.diff.data && oldModel.layout !== node.data.diff.layout) {
                     //updateGraph(node.elm, node.data.diff.data, node.data.diff.layout);
@@ -44,7 +44,7 @@ function view({ model, dispatch }: ViewObj) {
             },
             destroy: (node: VNode) => {
                 purge(node.elm);
-                console.log('destroy', node);
+                //console.log('destroy', node);
             }
         }
     });
