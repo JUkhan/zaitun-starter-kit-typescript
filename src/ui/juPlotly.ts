@@ -2,11 +2,7 @@ import { ViewObj } from 'zaitun';
 import { div, VNode } from 'zaitun/dom';
 import { guid } from './utils';
 import { PlotModel, dic } from './uimodel';
-
-// import { Observable } from "rxjs/Observable";
-// import "rxjs/observable/fromEvent";
-// import "rxjs/add/operator/map";
-
+ 
 declare const Plotly: any;
 
 function init() {
