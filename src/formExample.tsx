@@ -12,14 +12,15 @@ import {
 } from './ui/juForm'
 import Counter from './counter';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/from';
-//import { empty } from 'rxjs/observable/empty';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/do';
-import { Validators } from './ui/Validators'
+import { from } from 'rxjs';
+//import 'rxjs/add/observable/from';
+import { switchMap, filter, map } from 'rxjs/operators';
+//import 'rxjs/add/operator/switchMap';
+//import 'rxjs/add/operator/filter';
+//import 'rxjs/add/operator/map';
+//import 'rxjs/add/operator/do';
+import { Validators } from './ui/Validators';
+import { Effect } from 'zaitun-effect';
 const COUNTER_UPDATE = 'counterUpdate';
 const MY_FORM_UPDATE = 'my-form-update';
 
@@ -68,18 +69,20 @@ function update(model, action: Action) {
 
 }
 function loadCountryInfo(countryName) {
-    return Observable.from(
+    return from(
         fetch(`https://en.wikipedia.org/w/api.php?&origin=*&action=opensearch&search=${countryName}&limit=5`)
             .then(res => res.json()))
-        .map(res => res[1].map(_ => ({ text: _, value: _ })))
+        .pipe(
+            map(res => res[1].map(_ => ({ text: _, value: _ }))))
 }
 function afterViewRender(dispatch, router: Router) {
-    router.addEffect(eff =>
+    router.addEffect((eff: Effect) =>
         eff.whenAction(FORM_VALUE_CHANGED)
-            .filter(action=>action.payload.field.field === 'country')
-            .switchMap(action =>  loadCountryInfo(action.payload.value)
-                        .map(data => map_select_data_Action(action.dispatch, 'countryInfo', data))                
-            )
+            .pipe(
+                filter(action => action.payload.field.field === 'country'),
+                switchMap(action => loadCountryInfo(action.payload.value)
+                    .pipe(map(data => map_select_data_Action(action.dispatch, 'countryInfo', data)))
+                ))
     );
 
     const fdata = myForm.getFormData();
@@ -100,7 +103,7 @@ function getFormOptions(): FormOptions {
         title: 'Form Title',
         inputs: [
             [{
-                field: 'name', autofocus: true,               
+                field: 'name', autofocus: true,
                 label: model => `Name( ${model.data.name} )`,
                 validators: [
                     Validators.required(),
@@ -117,8 +120,8 @@ function getFormOptions(): FormOptions {
                 props: { maxLength: 10, placeholder: '00/00/0000' },
                 type: 'date',
                 size: 4
-            }],           
-            
+            }],
+
             [{
                 field: 'country',
                 label: 'Country',
@@ -224,8 +227,8 @@ function getFormOptions(): FormOptions {
             },
             {
                 type: 'tabs',
-                tabsCssClass:'.mb-4',
-                tabsBodyCssClass:'.p-4',
+                tabsCssClass: '.mb-4',
+                tabsBodyCssClass: '.p-4',
                 field: '',
                 footer: [
                     { label: 'ADD', type: 'button' },
@@ -245,10 +248,10 @@ function getFormOptions(): FormOptions {
                 },
                 tabs: {
                     'Tab1': {
-                        onInit:(dispatch:Dispatch)=>{
+                        onInit: (dispatch: Dispatch) => {
                             console.log('Tab1-init');
                         },
-                        onDestroy:(dispatch:Dispatch, model)=>{
+                        onDestroy: (dispatch: Dispatch, model) => {
                             console.log('Tab1-destroy', model);
                         },
                         inputs: [

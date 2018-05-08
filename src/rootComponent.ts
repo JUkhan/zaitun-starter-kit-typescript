@@ -1,36 +1,38 @@
 import { Router, ViewObj, Dispatch, Action } from 'zaitun';
-import {div, h3, nav, a, ul, li} from 'zaitun/dom';
+import { div, h3, nav, a, ul, li } from 'zaitun/dom';
 
-import 'rxjs/add/operator/mergeMap';
-import { empty } from 'rxjs/observable/empty';
+
+import { mergeMap } from 'rxjs/operators';
+import { empty } from 'rxjs';
 import counter from './counter';
 import appService from './appService';
-import {juForm} from './ui/juForm';
+import { juForm } from './ui/juForm';
+import {Effect} from 'zaitun-effect';
 
 
 const CHILD = Symbol('CHILD');
 const INC_AT = 'incAt';
 const DEC_AT = 'decAt';
-var popup:juForm=new juForm(); 
+var popup: juForm = new juForm();
 
-function getPopupOptions(){
+function getPopupOptions() {
     return {
-        viewMode:'popup',
-        title:'Popup Title',
-        name:'alert-popup',
-        size:'sm',            
-        inputs:[
-            {type:'vnode', vnode:model=>appService.msg}                                
+        viewMode: 'popup',
+        title: 'Popup Title',
+        name: 'alert-popup',
+        size: 'sm',
+        inputs: [
+            { type: 'vnode', vnode: model => appService.msg }
         ]
     }
 }
 
 function init() {
-      
+
     return {
-        popup:{
-            options:getPopupOptions(),
-            data:{}
+        popup: {
+            options: getPopupOptions(),
+            data: {}
         },
         incAt: null,
         decAt: null,
@@ -41,35 +43,39 @@ function init() {
             { path: 'counter', text: 'Counter' },
             { path: 'parent', text: 'Parent' },
             { path: 'form', text: 'Form Examples' },
-            { path: 'grid', text: 'Grid Examples' },           
-            { path: 'dispute', text: 'Dispute' },             
-            { path: 'chart', text: 'Chart' }, 
-            { path: 'fiber', text: 'Fiber Examples' },             
+            { path: 'grid', text: 'Grid Examples' },
+            { path: 'dispute', text: 'Dispute' },
+            { path: 'chart', text: 'Chart' },
+            { path: 'fiber', text: 'Fiber Examples' },
         ]
     };
 }
-function afterChildRender(dispatch:Dispatch, router: Router) {
+function afterChildRender(dispatch: Dispatch, router: Router) {
     router
-        .addEffect(eff =>
-            eff.whenAction(counter.actions.INCREMENT).mergeMap(action => {
-                dispatch({ type: INC_AT, payload: new Date().toString() });
-                return empty();
-            })
+        .addEffect((eff:Effect) =>
+            eff.whenAction(counter.actions.INCREMENT)
+                .pipe(
+                    mergeMap(action => {
+                        dispatch({ type: INC_AT, payload: new Date().toString() });
+                        return empty();
+                    }))
         )
-        .addEffect(eff =>
-            eff.whenAction(counter.actions.DECREMENT).mergeMap(action => {
-                dispatch({ type: DEC_AT, payload: new Date().toString() });
-                return empty();
-            })
+        .addEffect((eff:Effect) =>
+            eff.whenAction(counter.actions.DECREMENT)
+                .pipe(
+                    mergeMap(action => {
+                        dispatch({ type: DEC_AT, payload: new Date().toString() });
+                        return empty();
+                    }))
         );
-        appService.setPopup(popup);
+    appService.setPopup(popup);
 }
-function view({ model, dispatch, router }:ViewObj) {
-    return div( [
+function view({ model, dispatch, router }: ViewObj) {
+    return div([
         topMenu(model.menu, router),
-        h3( 'Root Component'),
+        h3('Root Component'),
         div(model.incAt ? 'Last incremented at: ' + model.incAt : ''),
-        div( model.decAt ? 'Last decremented at: ' + model.decAt : ''),
+        div(model.decAt ? 'Last decremented at: ' + model.decAt : ''),
         div(
             router.viewChild({
                 model: model.child,
@@ -77,11 +83,11 @@ function view({ model, dispatch, router }:ViewObj) {
                 dispatch: action => dispatch({ type: CHILD, payload: action })
             })
         ),
-        popup.view({model:model.popup, dispatch, router})
+        popup.view({ model: model.popup, dispatch, router })
     ]);
 }
 
-function update(model, action:Action, router:Router) {
+function update(model, action: Action, router: Router) {
     switch (action.type) {
         case CHILD:
             return {
@@ -99,16 +105,16 @@ function update(model, action:Action, router:Router) {
 
 function topMenu(model, router) {
     return nav('.navbar.navbar-expand-sm.bg-dark navbar-dark',
-        [ 
+        [
             a('.navbar-brand', { props: { href: '/counter' } }, 'Zaitun'),
-            ul('.navbar-nav',model.map(nav =>li('.nav-item',{
-                                class: {active:router.activeRoute.navPath === nav.path }
-                            },
-                            a('.nav-link',{ props: { href:  nav.path } }, nav.text )                            
-                        )
-                    )
-                )
-        ]);       
+            ul('.navbar-nav', model.map(nav => li('.nav-item', {
+                class: { active: router.activeRoute.navPath === nav.path }
+            },
+                a('.nav-link', { props: { href: nav.path } }, nav.text)
+            )
+            )
+            )
+        ]);
 
 }
 

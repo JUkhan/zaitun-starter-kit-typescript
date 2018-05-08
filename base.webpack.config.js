@@ -10,7 +10,7 @@ module.exports = {
   context: path.join (basePath, 'src'),
   resolve: {
     modules: [basePath, path.resolve (basePath, 'src'), 'node_modules'],
-    extensions: ['.ts', '.js', '.tsx', '.scss', '.css'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx',  '.scss', '.css'],
   },
   entry: {
     app: './main.ts',

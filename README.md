@@ -1,9 +1,9 @@
 # reactive-zaitun
 Zaitun is a functional reactive framework for front-end application development either in JavaScript or a language like TypeScript that compiles to JavaScript.
 
-Zaitun uses [Elm Architecture](https://guide.elm-lang.org/architecture/) for component development and [Rxjs](http://reactivex.io/rxjs/) to make the component reactive and [Snabbdom](https://github.com/snabbdom/snabbdom) to render the view of a component
+Inspired by [Elm Architecture](https://guide.elm-lang.org/architecture/) 
 
-## Quick start
+## Quick start or ([Live App](https://stackblitz.com/edit/zaitunapp-4akuet?embed=1&file=counter.ts))
 ```sh
 git clone https://github.com/JUkhan/zaitun-starter-kit-typescript.git quickstart
 cd quickstart
@@ -144,20 +144,31 @@ We can explain this in a short way like bellow:
 ## Note
 The view/update are both pure functions, they have no dependency on any external environment besides their input. The counter component itself doesn’t hold any state or variable, it just describes how to construct a view from a given state, and how to update a given state with a given action. Thanks to its purity, the counter component can be easily plugged into any environment that is able to supply it with its dependencies : a state  and an action.
 
+## Please see the [Counter List](https://stackblitz.com/edit/zaitunapp-4akuet?embed=1&file=counter.ts) example - how you perform async actions and parent child activities
+
 ## Adding side effects to the dispatched actions
+
+First of all you have to install `npm install --save zaitun-effect` and set the bootstrap configuration:
+```javascript
+import {EffectManager} from 'zaitun-effect';
+
+bootstrap({    
+    effectManager:EffectManager   
+});
+
+```
 
 There are several of ways to integrate effects in our application. One of them is to add effects into the `afterViewRender` life cycle hook method
 
 ```javascript
 function afterViewRender(dispatch:Dispatch, router: Router, model) {
-   
-        router
-        .addEffect(effect$ =>
-            effect$.whenAction(LAZY)
-                .delay(1000)
-                .map(action => ({ ...action, type: INCREMENT }))
-        ); 
-        
+     router.addEffect((effect: Effect) =>
+            effect.whenAction(counter.actions.LAZY)
+                .pipe(
+                    delay(1000),
+                    map(action => ({ ...action, type: INCREMENT }))
+            ));
+                
         /*
         you can make chain call of addEffect
             router
@@ -219,8 +230,8 @@ If we bring all the updates together our `counter` component looks like:
 import {Action, Router, ViewObj} from 'zaitun';
 import { span, button } from 'zaitun/dom';
 
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/map';
+import { delay, map } from 'rxjs/operators';
+import { Effect } from 'zaitun-effect';
 
 const INCREMENT='inc';
 const DECREMENT='dec';
@@ -231,12 +242,12 @@ function init() {
 }
 
 function afterViewRender(dispatch, router: Router, model?) {
-   router
-        .addEffect(effect$ =>
-            effect$.whenAction(LAZY)
-                .delay(1000)
-                .map(action => ({ ...action, type: INCREMENT }))
-        ); 
+   router.addEffect((effect: Effect) =>
+            effect.whenAction(counter.actions.LAZY)
+                .pipe(
+                    delay(1000),
+                    map(action => ({ ...action, type: INCREMENT }))
+            ));
               
 }
 
@@ -280,21 +291,26 @@ Also we can define a separate effect file (eg. `counterEffect.ts`)
 ```javascript
 
 import { Router } from 'zaitun';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/map';
+
+import { delay, map } from 'rxjs/operators';
+import { Effect } from 'zaitun-effect';
+
 import counter from './counter';
 
-export class CounterEffect{
-    constructor(router:Router){       
-        router.addEffect(effect$ =>
-            effect$.whenAction(counter.actions.LAZY)
-                .delay(1000)
-                .map(action => ({ ...action, type: counter.actions.INCREMENT }))
-        )
+
+export class CounterEffect {
+    constructor(router: Router) {
+        router.addEffect((effect: Effect) =>
+            effect.whenAction(counter.actions.LAZY)
+                .pipe(
+                    delay(1000),
+                    map(action => ({ ...action, type: counter.actions.INCREMENT }))
+                ));
     }
 }
 
 export default CounterEffect;
+
 
 ```
 
@@ -318,11 +334,14 @@ And the `bootstrap` function return the `Router` object
 import {bootstrap} from 'zaitun';
 import Counter from './counter';
 import {CounterEffect} from './counterEffect';
+import {EffectManager} from 'zaitun-effect';
+
 
  bootstrap({
   containerDom:'#app',
   mainComponent:Counter,
-  devTool:true
+  devTool:true,
+  effectManager:EffectManager  
 }).addEffectService(CounterEffect);
 
 ```

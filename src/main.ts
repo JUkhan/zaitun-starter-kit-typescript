@@ -74,6 +74,7 @@ const routes: RouteOptions[] = [
         loadComponent: () => System.import('./chart')
     },
 ];
+import {EffectManager} from 'zaitun-effect';
 
 bootstrap({
     containerDom: '#app',
@@ -81,6 +82,7 @@ bootstrap({
     routes: routes,
     activePath: 'page1',
     devTool: true,
+    effectManager:EffectManager
     //cacheStrategy:'session'
 });
 

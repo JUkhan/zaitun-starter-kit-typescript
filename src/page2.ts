@@ -1,7 +1,7 @@
 import { Action, ViewObj, Router } from 'zaitun';
 import { div, h4, a, input, ul, li, span } from 'zaitun/dom';
 
-import { Observable } from 'rxjs/Observable';
+import { from} from 'rxjs';
 import {
     map,
     debounceTime,
@@ -10,7 +10,7 @@ import {
     switchMap,
     distinctUntilChanged
 } from 'rxjs/operators';
-import 'rxjs/add/observable/from';
+
 
 const SEARCH = 'search';
 const SEARCH_RESULT = 'search result';
@@ -26,9 +26,9 @@ function afterViewRender(dispatch, router: Router) {
             .pipe(
             debounceTime(500),
             distinctUntilChanged(),
-            filter(action => action.payload.length > 1),
-            switchMap(action =>
-                Observable.from(
+            filter((action:Action) => action.payload.length > 1),
+            switchMap((action:Action) =>
+                from(
                     fetch(`https://en.wikipedia.org/w/api.php?&origin=*&action=opensearch&search=${action.payload}&limit=5`)
                         .then(res => res.json()))
                     .pipe(
