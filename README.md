@@ -284,6 +284,8 @@ function update(model: any, action: Action) {
 export default { init, view, update, afterViewRender, actions:{INCREMENT, DECREMENT, LAZY } }
 
 ```
+## You may find running code here [Async Example](https://stackblitz.com/edit/zaitunapp?embed=1&file=counter.ts) 
+
 When we click on the `+(async)` button it will display 'loading...' message for a while and then a incremented counter value should be displayed.
 
 Also we can define a separate effect file (eg. `counterEffect.ts`)
