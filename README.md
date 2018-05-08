@@ -148,7 +148,7 @@ The view/update are both pure functions, they have no dependency on any external
 
 ## Adding side effects to the dispatched actions
 
-First of all you have to install `npm install --save zaitun-effect` and set the bootstrap configuration:
+First of all you have to install `npm install --save zaitun-effect` `npm install --save rxjs` and set the bootstrap configuration:
 ```javascript
 import {EffectManager} from 'zaitun-effect';
 
@@ -163,7 +163,7 @@ There are several of ways to integrate effects in our application. One of them i
 ```javascript
 function afterViewRender(dispatch:Dispatch, router: Router, model) {
      router.addEffect((effect: Effect) =>
-            effect.whenAction(counter.actions.LAZY)
+            effect.whenAction(LAZY)
                 .pipe(
                     delay(1000),
                     map(action => ({ ...action, type: INCREMENT }))
@@ -243,7 +243,7 @@ function init() {
 
 function afterViewRender(dispatch, router: Router, model?) {
    router.addEffect((effect: Effect) =>
-            effect.whenAction(counter.actions.LAZY)
+            effect.whenAction(LAZY)
                 .pipe(
                     delay(1000),
                     map(action => ({ ...action, type: INCREMENT }))
