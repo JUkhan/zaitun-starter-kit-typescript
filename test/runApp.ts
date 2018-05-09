@@ -1,4 +1,5 @@
 import { bootstrap, RouteOptions } from 'zaitun';
+import {EffectManager} from 'zaitun-effect';
 
 import rootCom from '../src/rootComponent';
 import page1 from '../src/page1';
@@ -51,7 +52,8 @@ var run=(navName)=>{
         routes: routes,
         activePath: navName,
         locationStrategy:'memory',
-        devTool: false
+        devTool: false,
+        effectManager:EffectManager
     }).test();
 }
 
