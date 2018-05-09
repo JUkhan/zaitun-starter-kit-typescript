@@ -1,6 +1,12 @@
 import { ViewObj, Dispatch, Action } from 'zaitun';
 import { html } from 'snabbdom-jsx';
-import { initId, initTriangle, triangleDestroy, SierpinskiTriangle, MOUSE_ENTER, MOUSE_LEAVE } from './triangle';
+import { initId,
+     initTriangle, 
+     triangleDestroy,
+     SierpinskiTriangle,
+     shouldComponentUpdate,
+     MOUSE_ENTER, 
+     MOUSE_LEAVE } from './triangle';
 
 
 var containerStyle = {
@@ -37,19 +43,20 @@ function onDestroy() {
     triangleDestroy();
 }
 var pm: any = {}, triangleVDom = null;
-function OptimiseTriangle(model) {
+function OptimizeTriangle(model) {
     initId();
     if (!triangleVDom) {
         pm = model;
         return triangleVDom = SierpinskiTriangle(model);
     } else {
-        if (pm.text !== model.text || pm.id !== model.id || pm.hover !== model.hover) {
+        if (shouldComponentUpdate(pm, model)) {
             triangleVDom = SierpinskiTriangle(model);
         }
         pm = model;
         return triangleVDom;
     }
 }
+
 function view({ model, dispatch }: ViewObj) {
 
     const t = (model.elapsed / 1000) % 10;
@@ -57,9 +64,9 @@ function view({ model, dispatch }: ViewObj) {
     const transform = 'scaleX(' + (scale / 2.1) + ') scaleY(0.7) translateZ(0.1px)';
     return <div style={{ ...containerStyle, transform }}>
         <div>
-            <OptimiseTriangle x={0} y={0} s={1000} text={model.seconds} id={model.id} hover={model.hover} dispatch={dispatch}>
+            <OptimizeTriangle x={0} y={0} s={1000} text={model.seconds} id={model.id} hover={model.hover} dispatch={dispatch}>
 
-            </OptimiseTriangle>
+            </OptimizeTriangle>
         </div>
     </div>
 }

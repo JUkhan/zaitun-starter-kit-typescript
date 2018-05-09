@@ -87,3 +87,9 @@ export function SierpinskiTriangle({ x, y, s, text, id, hover ,dispatch}) {
 
     ];
 }
+
+export function shouldComponentUpdate(oldModel, newModel){
+    var o=oldModel;
+    var n=newModel;
+    return o.text !== n.text || o.id !== n.id || o.hover !== n.hover;
+}
