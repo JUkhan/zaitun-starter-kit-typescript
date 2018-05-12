@@ -12,13 +12,10 @@ import {
 } from './ui/juForm'
 import Counter from './counter';
 
-import { from } from 'rxjs';
-//import 'rxjs/add/observable/from';
+import { ajax, AjaxResponse } from 'rxjs/ajax';
+
 import { switchMap, filter, map } from 'rxjs/operators';
-//import 'rxjs/add/operator/switchMap';
-//import 'rxjs/add/operator/filter';
-//import 'rxjs/add/operator/map';
-//import 'rxjs/add/operator/do';
+
 import { Validators } from './ui/Validators';
 import { Effect } from 'zaitun-effect';
 const COUNTER_UPDATE = 'counterUpdate';
@@ -69,10 +66,10 @@ function update(model, action: Action) {
 
 }
 function loadCountryInfo(countryName) {
-    return from(
-        fetch(`https://en.wikipedia.org/w/api.php?&origin=*&action=opensearch&search=${countryName}&limit=5`)
-            .then(res => res.json()))
+    return ajax(
+        `https://en.wikipedia.org/w/api.php?&origin=*&action=opensearch&search=${countryName}&limit=5`)
         .pipe(
+            map((res: AjaxResponse) => res.response),
             map(res => res[1].map(_ => ({ text: _, value: _ }))))
 }
 function afterViewRender(dispatch, router: Router) {

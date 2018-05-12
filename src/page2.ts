@@ -1,7 +1,8 @@
 import { Action, ViewObj, Router } from 'zaitun';
 import { div, h4, a, input, ul, li, span } from 'zaitun/dom';
 
-import { from} from 'rxjs';
+import { ajax, AjaxResponse } from 'rxjs/ajax';
+
 import {
     map,
     debounceTime,
@@ -24,18 +25,17 @@ function afterViewRender(dispatch, router: Router) {
     router.addEffect(eff$ =>
         eff$.whenAction(SEARCH)
             .pipe(
-            debounceTime(500),
-            distinctUntilChanged(),
-            filter((action:Action) => action.payload.length > 1),
-            switchMap((action:Action) =>
-                from(
-                    fetch(`https://en.wikipedia.org/w/api.php?&origin=*&action=opensearch&search=${action.payload}&limit=5`)
-                        .then(res => res.json()))
-                    .pipe(
-                    tap(console.log),
-                    map(res => ({ ...action, type: SEARCH_RESULT, payload: res }))
-                    )
-            ))
+                debounceTime(500),
+                distinctUntilChanged(),
+                filter((action: Action) => action.payload.length > 1),
+                switchMap((action: Action) =>
+                    ajax(`https://en.wikipedia.org/w/api.php?&origin=*&action=opensearch&search=${action.payload}&limit=5`)
+                        .pipe(
+                            map((res: AjaxResponse) => res.response),
+                            tap(console.log),
+                            map(res => ({ ...action, type: SEARCH_RESULT, payload: res }))
+                        )
+                ))
     )
 }
 
