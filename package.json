@@ -23,11 +23,11 @@
     ""
   ],
   "license": "Apache-2.0",
-  "dependencies": {
-    "rxjs": "^6.1.0",
+  "dependencies": {    
     "snabbdom-jsx": "^0.4.2",
-    "zaitun": "^1.6.14",
-    "zaitun-effect": "1.0.1"
+    "zaitun": "^1.6.15",
+    "zaitun-effect": "^1.0.2",
+    "zaitun-devtool": "^1.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.0.10",

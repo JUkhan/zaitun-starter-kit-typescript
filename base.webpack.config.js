@@ -14,7 +14,7 @@ module.exports = {
   },
   entry: {
     app: './main.ts',
-    appStyles: ['./styles/devTool.scss', './styles/styles.scss','./styles/ui.scss'],
+    appStyles: ['./styles/styles.scss','./styles/ui.scss'],
     //vendor: [
       //'jquery',      
       //'materialize-css',
@@ -46,8 +46,12 @@ module.exports = {
         }),
       },
       {
+        test:/\.css$/,
+        use:['style-loader','css-loader']
+      },
+      {
         test: /\.css$/,
-        exclude: /node_modules/,
+        exclude: /node_modules/,        
         loader: ExtractTextPlugin.extract ({
           fallback: 'style-loader',
           use: {

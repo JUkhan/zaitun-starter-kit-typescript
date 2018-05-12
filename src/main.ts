@@ -75,13 +75,13 @@ const routes: RouteOptions[] = [
     },
 ];
 import {EffectManager} from 'zaitun-effect';
-
+import {DevTool} from 'zaitun-devtool';
 bootstrap({
     containerDom: '#app',
     mainComponent: rootCom,    
     routes: routes,
     activePath: 'page1',
-    devTool: true,
+    devTool: DevTool,
     effectManager:EffectManager
     //cacheStrategy:'session'
 });

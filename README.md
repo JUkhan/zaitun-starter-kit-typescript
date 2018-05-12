@@ -111,12 +111,25 @@ import Counter from './counter';
 
  bootstrap({
   containerDom:'#app',
-  mainComponent:Counter,
-  devTool:true
+  mainComponent:Counter
 });
 
 ```
-
+## To Enable DevTool
+```sh
+npm install --save zaitun-devtool
+```
+### And need to set up bootstrap's `devTool` option
+```javascript
+import {bootstrap} from 'zaitun';
+import Counter from './counter';
+import {DevTool} from 'zaitun-devtool';
+bootstrap({
+    containerDom:'#app',
+    mainComponent:Counter
+    devTool: DevTool    
+});
+```
 What's happen when we call the bootstrap method - passing `Counter` as a main component ?
 
 Ans: Zaitun first call the `init` function of `Counter` componet with 3 params(dispatch, routeParams, router). Please keep going on - ignore the params for this time being.
@@ -148,7 +161,7 @@ The view/update are both pure functions, they have no dependency on any external
 
 ## Adding side effects to the dispatched actions
 
-First of all you have to install `npm install --save zaitun-effect` `npm install --save rxjs` and set the bootstrap configuration:
+First of all you have to install `npm install --save zaitun-effect`  and set the bootstrap configuration:
 ```javascript
 import {EffectManager} from 'zaitun-effect';
 
@@ -284,9 +297,9 @@ function update(model: any, action: Action) {
 export default { init, view, update, afterViewRender, actions:{INCREMENT, DECREMENT, LAZY } }
 
 ```
-## You may find running code here [Async Example](https://stackblitz.com/edit/zaitunapp?embed=1&file=counter.ts) 
+## You may run the code from here [Effect Example](https://stackblitz.com/edit/zaitunapp?embed=1&file=counter.ts) 
 
-When we click on the `+(async)` button it will display 'loading...' message for a while and then a incremented counter value should be displayed.
+When you click on the `+(async)` button(`dispatch LAZY action`) it will display 'loading...' message and after 1000 milisecond effect should dispatch a INCREMENT action as a result incremented counter value should be displayed.
 
 Also we can define a separate effect file (eg. `counterEffect.ts`)
 
@@ -341,8 +354,7 @@ import {EffectManager} from 'zaitun-effect';
 
  bootstrap({
   containerDom:'#app',
-  mainComponent:Counter,
-  devTool:true,
+  mainComponent:Counter,  
   effectManager:EffectManager  
 }).addEffectService(CounterEffect);
 
@@ -434,8 +446,7 @@ import {CounterEffect} from './counterEffect';
 
  bootstrap({
   containerDom:'#app',
-  mainComponent:parentComponent,
-  devTool:true
+  mainComponent:parentComponent  
 }).addEffectService(CounterEffect);
 
 ```
