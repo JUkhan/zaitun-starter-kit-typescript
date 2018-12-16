@@ -4,14 +4,14 @@ import { juForm } from './ui/juForm';
 import { juGrid } from './ui/juGrid';
 import {DisputeService} from '../services/DisputeService';
 import {AppService} from '../services/AppService';
-import {Injector} from 'zaitun';
+import {Page} from 'zaitun';
 
+@Page([AppService,DisputeService])
 export default class disputeCom {
     form: juForm;
     Rpr: juGrid;
     Hcfa: juGrid;
-    service: DisputeService;
-    appService:AppService;
+    
 
     activeTab = 'RPR Dispute Codes';
     buttons = { save: false, add: false, delete: false };
@@ -20,12 +20,10 @@ export default class disputeCom {
     hcfaData;
     model: any;
     rprSR;
-    constructor() {
+    constructor(private appService:AppService, private service: DisputeService) {
         this.form = new juForm();
         this.Rpr = new juGrid();
-        this.Hcfa = new juGrid();
-        this.service = Injector.get(DisputeService);
-        this.appService=Injector.get(AppService);
+        this.Hcfa = new juGrid();       
 
         this.activeTab = 'RPR Dispute Codes';
         this.buttons = { save: false, add: false, delete: false };
