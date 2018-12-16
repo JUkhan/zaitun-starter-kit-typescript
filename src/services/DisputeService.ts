@@ -1,10 +1,12 @@
+import {Injectable} from 'zaitun';
 
-export default class disputeService{
+@Injectable('page')
+export  class DisputeService{
     ch:any[];
     hccd:any;
     constructor(){
         this.ch=['','a','b','c','d','e','f','g','h','i','f','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
-        this._hcfaCode();
+        this.hcfaCode();
     }
     getPermission(){
         return Promise.resolve({ editable:true});
@@ -12,14 +14,14 @@ export default class disputeService{
     getRpr(params){
         const data=[];
         for (var index = 0; index < params.pageSize; index++) {
-            data.push({shortDes:this._charByLimit(5), auto:false, des:this._charByLimit(25), hcfaCd:this._getHccd(), active:this._boolValue()})
+            data.push({shortDes:this.charByLimit(5), auto:false, des:this.charByLimit(25), hcfaCd:this.getHccd(), active:this.boolValue()})
         }
         return Promise.resolve({data,totalRecords:150});
     }
     getHcfa(){
         const data=[];
         for (var index = 1; index < 45; index++) {
-            data.push({hcfaCd:this.hccd[index], type:index%2==0?'PDC':'MCSD', des:this._charByLimit(25)})
+            data.push({hcfaCd:this.hccd[index], type:index%2==0?'PDC':'MCSD', des:this.charByLimit(25)})
         }
         return Promise.resolve({data});
     }
@@ -29,25 +31,25 @@ export default class disputeService{
         data.push({text:'MCSD', value:'MCSD'})
         return Promise.resolve({data});
     }
-    _getHccd(){
+    private getHccd(){
          return this.hccd[Math.ceil(Math.random()*50)];
     }
-    _hcfaCode(){
+    private hcfaCode(){
         this.hccd=[''];
         for (var index = 0; index < 50; index++) {
-            this.hccd.push(this._charByLimit(2));            
+            this.hccd.push(this.charByLimit(2));            
         }
     }
-    _boolValue(){
+    private boolValue(){
         return Math.ceil(Math.random()*2)===1
     }
-    _randChar(){       
+    private randChar(){       
         return this.ch[Math.ceil(Math.random()*26)];
     }
-    _charByLimit(limit){
+    private charByLimit(limit){
         const res=[];
         for (var index = 0; index < limit; index++) {
-            res.push(this._randChar());
+            res.push(this.randChar());
         }
         return res.join('');
     }

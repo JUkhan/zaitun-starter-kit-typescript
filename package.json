@@ -23,9 +23,9 @@
     ""
   ],
   "license": "Apache-2.0",
-  "dependencies": {    
+  "dependencies": {
     "snabbdom-jsx": "^0.4.2",
-    "zaitun": "^1.6.15",
+    "zaitun": "^1.7.1",
     "zaitun-effect": "^1.0.2",
     "zaitun-devtool": "^1.0.0"
   },

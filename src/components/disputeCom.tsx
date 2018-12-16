@@ -1,15 +1,17 @@
-import { FormOptions, GridOptions } from '../ui/uimodel';
+import { FormOptions, GridOptions } from './ui/UIModels';
 import { html } from 'snabbdom-jsx';
-import { juForm } from '../ui/juForm';
-import { juGrid } from '../ui/juGrid';
-import DisputeService from './disputeService';
-import appService from '../appService';
+import { juForm } from './ui/juForm';
+import { juGrid } from './ui/juGrid';
+import {DisputeService} from '../services/DisputeService';
+import {AppService} from '../services/AppService';
+import {Injector} from 'zaitun';
 
 export default class disputeCom {
     form: juForm;
     Rpr: juGrid;
     Hcfa: juGrid;
     service: DisputeService;
+    appService:AppService;
 
     activeTab = 'RPR Dispute Codes';
     buttons = { save: false, add: false, delete: false };
@@ -22,7 +24,8 @@ export default class disputeCom {
         this.form = new juForm();
         this.Rpr = new juGrid();
         this.Hcfa = new juGrid();
-        this.service = new DisputeService();
+        this.service = Injector.get(DisputeService);
+        this.appService=Injector.get(AppService);
 
         this.activeTab = 'RPR Dispute Codes';
         this.buttons = { save: false, add: false, delete: false };
@@ -79,7 +82,7 @@ export default class disputeCom {
         }
     }
     remove() {
-        appService.confirm('Confirm', <p>Are you sure?</p>)
+        this.appService.confirm('Confirm', <p>Are you sure?</p>)
             .then(() => {
                 this.activeTab === 'RPR Dispute Codes' ?
                     this.Rpr.removeRow(this.rprSR).refresh()

@@ -1,18 +1,15 @@
-import { Router, ViewObj, Dispatch, Action } from 'zaitun';
+import { Router, ViewObj, Dispatch, Action,Injector } from 'zaitun';
 import { div, h3, nav, a, ul, li } from 'zaitun/dom';
 
 
 import { mergeMap } from 'rxjs/operators';
 import { empty } from 'rxjs';
-import counter from './counter';
-import appService from './appService';
+import {AppService} from '../services/AppService';
 import { juForm } from './ui/juForm';
 import {Effect} from 'zaitun-effect';
+import {CHILD,INC_AT,DEC_AT,INCREMENT,DECREMENT} from './actionTypes';
 
-
-const CHILD = Symbol('CHILD');
-const INC_AT = 'incAt';
-const DEC_AT = 'decAt';
+var appService:AppService=Injector.get(AppService);
 var popup: juForm = new juForm();
 
 function getPopupOptions() {
@@ -37,11 +34,11 @@ function init() {
         incAt: null,
         decAt: null,
         menu: [
-            { path: 'page1', text: 'Page1' },
-            { path: 'page2', text: 'page2' },
-            { path: 'page3/5/My favourite fruits', text: 'page3' },
+            { path: 'animation', text: 'Animation' },
+            { path: 'search', text: 'Search' },
+            { path: 'dataloading/5/My favourite fruits', text: 'Data Loading' },
             { path: 'counter', text: 'Counter' },
-            { path: 'parent', text: 'Parent' },
+            { path: 'parent', text: 'Parent Child' },
             { path: 'form', text: 'Form Examples' },
             { path: 'grid', text: 'Grid Examples' },
             { path: 'dispute', text: 'Dispute' },
@@ -53,7 +50,7 @@ function init() {
 function afterChildRender(dispatch: Dispatch, router: Router) {
     router
         .addEffect((eff:Effect) =>
-            eff.whenAction(counter.actions.INCREMENT)
+            eff.whenAction(INCREMENT)
                 .pipe(
                     mergeMap(action => {
                         dispatch({ type: INC_AT, payload: new Date().toLocaleTimeString() });
@@ -61,7 +58,7 @@ function afterChildRender(dispatch: Dispatch, router: Router) {
                     }))
         )
         .addEffect((eff:Effect) =>
-            eff.whenAction(counter.actions.DECREMENT)
+            eff.whenAction(DECREMENT)
                 .pipe(
                     mergeMap(action => {
                         dispatch({ type: DEC_AT, payload: new Date().toLocaleTimeString() });

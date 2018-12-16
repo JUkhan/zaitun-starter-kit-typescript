@@ -2,7 +2,7 @@
 import { ViewObj, Action, Router, Dispatch } from 'zaitun';
 import { div } from 'zaitun/dom';
 
-import { FormOptions } from './ui/uimodel';
+import { FormOptions } from './ui/UIModels';
 import {
     juForm,
     TAB_CLICK,
@@ -18,8 +18,7 @@ import { switchMap, filter, map } from 'rxjs/operators';
 
 import { Validators } from './ui/Validators';
 import { Effect } from 'zaitun-effect';
-const COUNTER_UPDATE = 'counterUpdate';
-const MY_FORM_UPDATE = 'my-form-update';
+import {COUNTER_UPDATE,MY_FORM_UPDATE} from './actionTypes';
 
 const myForm = new juForm();
 
@@ -147,7 +146,7 @@ function getFormOptions(): FormOptions {
                 type: 'file',
                 field: 'dataFile',
                 invalidFeedback: '.jpg & .jpeg files are only allowed',
-                fileExt: ['.jpg', '.jpeg'],
+                fileExt: ['.jpg', '.jpeg','.png'],
                 label: 'Select file',
                 validators: [Validators.required()]
             },
@@ -298,7 +297,10 @@ function getFormOptions(): FormOptions {
             {
                 type: 'button',
                 label: 'Submit',
-                props: (model: any) => ({ disabled: !myForm.isValid }),
+                props: (model: any) => {
+                    console.log(myForm.isValid);
+                    return { disabled: !myForm.isValid }
+                },
                 on: { click: ev => console.log(myForm.getFormData()) }
             },
             {

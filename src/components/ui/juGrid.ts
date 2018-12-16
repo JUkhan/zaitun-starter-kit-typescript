@@ -1,7 +1,7 @@
 import {h, Dispatch} from 'zaitun';
 import {juPage} from './juPager';
-import {s4} from './utils';
-import {GridOptions, Column} from './uimodel';
+import {s4} from './Utils';
+import {GridOptions, Column} from './UIModels';
 //const DATA_CHANGE=Symbol('SET_DATA');
 const PAGER_ACTION=Symbol('pager_action');
 const REFRESH=Symbol('REFRESH');

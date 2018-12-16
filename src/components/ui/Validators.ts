@@ -1,4 +1,4 @@
-import {Field} from './uimodel';
+import {Field} from './UIModels';
 export class Validators {
 
     static required(message?: string): any {

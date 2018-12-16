@@ -1,7 +1,7 @@
 import { ViewObj } from 'zaitun';
 import { div, VNode } from 'zaitun/dom';
-import { guid } from './utils';
-import { PlotModel, dic } from './uimodel';
+import { guid } from './Utils';
+import { PlotModel, dic } from './UIModels';
  
 declare const Plotly: any;
 

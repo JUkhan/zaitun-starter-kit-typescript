@@ -1,17 +1,18 @@
-import { ViewObj } from 'zaitun';
+import { ViewObj, Injector } from 'zaitun';
 import { div, b } from 'zaitun/dom';
 import { html } from 'snabbdom-jsx';
 import { juGrid } from './ui/juGrid';
-import { GridOptions } from './ui/uimodel';
-import appService from './appService';
+import { GridOptions } from './ui/UIModels';
+import {AppService} from '../services/AppService';
 
 export default class GridExample {
     grid: juGrid;
     selectedRow: any;
-
+    service:AppService
     constructor() {
         console.log('gridExample constructor');
         this.grid = new juGrid();
+        this.service = Injector.get(AppService);
     }
     init() {
         return { gridOptions: this.getGridOptions() }
@@ -85,8 +86,8 @@ export default class GridExample {
                                 <button on-click={() => this.add()}>Add <i classNames="fa fa-plus"></i></button>&nbsp;
                             <button 
                             disabled={this.grid.data.length === 0} 
-                            on-click={() => appService.confirm('Confirm', 'Remove sure?')
-                            .then(e=>e==='yes'&&this.grid.removeRow(this.selectedRow).pager.clickPage(this.grid.pager.activePage))}
+                            on-click={() => this.service.confirm('Confirm', 'Remove sure?')
+                            .then(e=>e==='yes'&&this.grid.removeRow(this.selectedRow))}
                             >Remove <i classNames="fa fa-trash"></i></button>
                             </div>
                     },

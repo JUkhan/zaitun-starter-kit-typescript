@@ -1,10 +1,10 @@
 
 import { ViewObj, Action, Dispatch } from 'zaitun';
 import { div } from 'zaitun/dom';
-import { SegmentModel, PlotModel } from './ui/uimodel'
+import { SegmentModel, PlotModel } from './ui/UIModels'
 import Segment from './ui/juSegment';
 import Ploat from './ui/juPlotly';
-const SEGMENT = Symbol('segment');
+import {SEGMENT} from './actionTypes';
 
 function init() {
     return {

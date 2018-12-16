@@ -126,7 +126,7 @@ class juPage {
         }
 
     }
-    clickPage(index) {
+    clickPage(index) {      
         this.activePage = index;
         this.firePageChange();
     }

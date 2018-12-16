@@ -3,16 +3,16 @@ import { Router } from 'zaitun';
 import { delay, map } from 'rxjs/operators';
 import { Effect } from 'zaitun-effect';
 
-import counter from './counter';
+import {LAZY, INCREMENT} from '../components/actionTypes';
 
 
 export class CounterEffect {
     constructor(router: Router) {
         router.addEffect((effect: Effect) =>
-            effect.whenAction(counter.actions.LAZY)
+            effect.whenAction(LAZY)
                 .pipe(
                     delay(1000),
-                    map(action => ({ ...action, type: counter.actions.INCREMENT }))
+                    map(action => ({ ...action, type:INCREMENT }))
                 ));
     }
 }

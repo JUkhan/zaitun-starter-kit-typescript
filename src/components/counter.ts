@@ -1,9 +1,7 @@
 import { Action, ViewObj } from 'zaitun';
 import { span, button } from 'zaitun/dom';
+import {INCREMENT,DECREMENT,LAZY} from './actionTypes';
 
-const INCREMENT = 'inc';
-const DECREMENT = 'dec';
-const LAZY = 'lazy';
 
 function init() {
     return { count: 0, msg: '' };
@@ -44,6 +42,5 @@ function update(model: any, action: Action) {
 export default {
     init,
     view,
-    update,
-    actions: { INCREMENT, DECREMENT, LAZY }
+    update
 };

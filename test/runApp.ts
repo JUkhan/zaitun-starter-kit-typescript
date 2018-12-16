@@ -1,13 +1,13 @@
 import { bootstrap, RouteOptions } from 'zaitun';
 import {EffectManager} from 'zaitun-effect';
 
-import rootCom from '../src/rootComponent';
-import page1 from '../src/page1';
-import page2 from '../src/page2';
-import page3 from '../src/page3';
-import counterEffect from '../src/counterEffect';
-import counter from '../src/counter';
-import parent from '../src/parent';
+import rootCom from '../src/components/rootComponent';
+import animation from '../src/components/animation';
+import search from '../src/components/search';
+import dataloading from '../src/components/dataLoading';
+import counterEffect from '../src/effects/CounterEffect';
+import counter from '../src/components/counter';
+import parentChild from '../src/components/parentChild';
 
 function getData(routeParams: any) {
     console.log(routeParams);
@@ -23,15 +23,15 @@ function getData(routeParams: any) {
 }
 
 const routes: RouteOptions[] = [
-    { path: 'page1', component: page1 },
+    { path: 'animation', component: animation },
     {
-       path: 'page2',       
-       component:page2
+       path: 'search',       
+       component:search
     },
     {
-        path: 'page3/:times/:title',
+        path: 'dataloading/:times/:title',
         data: getData,
-        component:page3
+        component:dataloading
     },
     {
         path: 'counter',               
@@ -41,7 +41,7 @@ const routes: RouteOptions[] = [
     {
         path: 'parent',       
         effects: [counterEffect],
-        component: parent
+        component: parentChild
     }
 ];
 

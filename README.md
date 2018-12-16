@@ -10,7 +10,7 @@ cd quickstart
 npm install
 npm start
 npm run build:prod
-Browse http://localhost:8080
+Browse http://localhost:8484
 
 npm run test
 ```

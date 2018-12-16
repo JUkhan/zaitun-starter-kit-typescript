@@ -1,11 +1,9 @@
 import { Action, ViewObj } from 'zaitun';
 import {div, h3} from 'zaitun/dom';
-
 import Counter from './counter';
 
-const COUNTER_UPDATE = 'counterUpdate';
-const INC_AT = 'incAt';
-const DEC_AT = 'decAt';
+import {COUNTER_UPDATE, INC_AT, DEC_AT} from './actionTypes';
+
 
 function init() {
     return { counter: Counter.init(), incAt: null, decAt: null };
@@ -44,6 +42,5 @@ function update(model, action: Action) {
 export default {
     init,
     view,
-    update,
-    actions: { COUNTER_UPDATE, INC_AT, DEC_AT }
+    update
 };

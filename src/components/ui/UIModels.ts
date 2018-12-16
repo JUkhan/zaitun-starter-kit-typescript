@@ -43,7 +43,7 @@ export interface Field {
     tabsBodyCssClass?: string;
     tabClick?: (model: any, tabName: string, preTab: string) => boolean | Promise<boolean>;
     vnode?: (model: any) => VNode;
-    actionType?: string;
+    actionType?: any;
     component?: any;
     tabs?: { [key: string]: Tab };
     classNames?: string;
