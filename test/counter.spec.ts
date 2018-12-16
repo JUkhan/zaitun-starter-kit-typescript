@@ -3,7 +3,7 @@ import {assert} from 'chai';
 import {Router, TestResult} from 'zaitun';
 //import counter from '../src/components/counter';
 import navigate from './runApp';
-import {INCREMENT,DECREMENT,LAZY} from '../src/components/actionTypes';
+import {INCREMENT,DECREMENT,LAZY, INC_AT, DEC_AT} from '../src/components/actionTypes';
 describe('counter test',()=>{
     const router:Router=navigate('counter');    
     it('increment', ()=>{
@@ -25,11 +25,11 @@ describe('counter test',()=>{
     it('increment effect(registered in rootComponent)', (done)=>{
         const model=router.getAppState();
         router.whenAction({type:INCREMENT}, (res:TestResult)=>{
-            
+            console.log(res);
             if(res.action.payload.type===INCREMENT){
                 assert.equal(model.child.count+1,res.model.child.count); 
             }
-            else if(res.action.type==='incAt'){
+            else if(res.action.type===INC_AT){
                 assert.notEqual(model.incAt,res.model.incAt);
                 done(); 
             }
@@ -45,7 +45,7 @@ describe('counter test',()=>{
             if(res.action.payload.type===DECREMENT){
                 assert.equal(model.child.count-1,res.model.child.count); 
             }
-            else if(res.action.type==='decAt'){
+            else if(res.action.type===DEC_AT){
                 assert.notEqual(model.decAt,res.model.decAt);
                 done(); 
             }
@@ -64,7 +64,7 @@ describe('counter test',()=>{
             else if(res.action.payload.type===INCREMENT){
                 assert.equal(model.child.count+1,res.model.child.count); 
             }           
-            else if(res.action.type==='incAt'){
+            else if(res.action.type===INC_AT){
                 assert.notEqual(model.incAt,res.model.incAt);
                 done(); 
             }
