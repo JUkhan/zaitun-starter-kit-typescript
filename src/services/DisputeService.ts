@@ -2,28 +2,53 @@ import {Injectable} from 'zaitun';
 
 @Injectable('page')
 export  class DisputeService{
-    ch:any[];
-    hccd:any;
+    private ch:any[];
+    private hccd:any;
+    private rprData=[];
+    private hcfaData=[];
     constructor(){
         this.ch=['','a','b','c','d','e','f','g','h','i','f','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
         this.hcfaCode();
+        for (var index = 0; index < 150; index++) {
+            this.rprData.push({shortDes:this.charByLimit(5), auto:false, des:this.charByLimit(25), hcfaCd:this.getHccd(), active:this.boolValue()})
+        }
+        for (var index = 1; index < 20; index++) {
+            this.hcfaData.push({hcfaCd:this.hccd[index], type:index%2==0?'PDC':'MCSD', des:this.charByLimit(25)})
+        }
     }
     getPermission(){
         return Promise.resolve({ editable:true});
     }
-    getRpr(params){
-        const data=[];
-        for (var index = 0; index < params.pageSize; index++) {
-            data.push({shortDes:this.charByLimit(5), auto:false, des:this.charByLimit(25), hcfaCd:this.getHccd(), active:this.boolValue()})
+    getRpr(params:{pageNo:number,pageSize:number,searchText: string, sort: string}){
+         
+        if(params.sort){            
+            let sortArr=params.sort.split('|');            
+            if(sortArr[1]==='asc')
+            this.rprData.sort((a,b)=>{
+                if(a[sortArr[0]]<b[sortArr[0]]) return -1;
+                if(a[sortArr[0]]>b[sortArr[0]]) return 1;
+                return 0;
+            })
+            else 
+            this.rprData.sort((a,b)=>{
+                if(a[sortArr[0]]<b[sortArr[0]]) return 1;
+                if(a[sortArr[0]]>b[sortArr[0]]) return -1;
+                return 0;
+            })
         }
-        return Promise.resolve({data,totalRecords:150});
+        let data=[];
+        if(params.searchText){
+            data=this.rprData.filter(a=>a['shortDes'].includes(params.searchText)||a['hcfaCd'].includes(params.searchText))
+        }
+        else data=this.rprData;
+
+        let start=(params.pageNo-1)*params.pageSize;
+        let end=params.pageNo*params.pageSize;
+        
+        return Promise.resolve({data:data.slice(start, end),totalRecords:data.length});
     }
-    getHcfa(){
-        const data=[];
-        for (var index = 1; index < 45; index++) {
-            data.push({hcfaCd:this.hccd[index], type:index%2==0?'PDC':'MCSD', des:this.charByLimit(25)})
-        }
-        return Promise.resolve({data});
+    getHcfa(){        
+        return Promise.resolve({data:this.hcfaData});
     }
     getType(){
         const data=[];
