@@ -19,22 +19,12 @@ export  class DisputeService{
     getPermission(){
         return Promise.resolve({ editable:true});
     }
-    getRpr(params:{pageNo:number,pageSize:number,searchText: string, sort: string}){
-         
-        if(params.sort){            
-            let sortArr=params.sort.split('|');            
-            if(sortArr[1]==='asc')
-            this.rprData.sort((a,b)=>{
-                if(a[sortArr[0]]<b[sortArr[0]]) return -1;
-                if(a[sortArr[0]]>b[sortArr[0]]) return 1;
-                return 0;
-            })
-            else 
-            this.rprData.sort((a,b)=>{
-                if(a[sortArr[0]]<b[sortArr[0]]) return 1;
-                if(a[sortArr[0]]>b[sortArr[0]]) return -1;
-                return 0;
-            })
+    private compare(a, b, isAsc){
+        return (a<b?-1:1)*(isAsc?1:-1);
+    }
+    getRpr(params:{pageNo:number,pageSize:number,searchText: string, sortBy: string,direction:string}){         
+        if(params.sortBy){            
+            this.rprData.sort((a,b)=>this.compare(a[params.sortBy],b[params.sortBy],params.direction==='asc'));           
         }
         let data=[];
         if(params.searchText){

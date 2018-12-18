@@ -130,16 +130,19 @@ class juGrid{
             {
                 _['reverse'] = undefined;
             }
-        });        
+        });     
+        
         const reverse = !col['reverse'] ? 1 : -1, sortFn = typeof col.comparator === 'function' ?
-            (a, b) => reverse * col.comparator(a, b) :
-            function (a:string, b:string) { return a = a[col.field].toString(), b = b[col.field].toString(), reverse * a.localeCompare(b); };
+            (a, b) => reverse * col.comparator(a, b) :(a:any, b:any)=>this.compare(a[col.field],b[col.field],!col['reverse']);
         if(!this.pager.sspFn){
             this.pager.data.sort(sortFn);
         }
         this._sort_action=true;
-        this.pager.sort(col.field,col['reverse']);
+        this.pager.sort(col.field, col['reverse']);
       
+    }
+    protected compare(a, b, isAsc){
+        return (a<b?-1:1)*(isAsc?1:-1);
     }
     protected _sortIcon(colDef:Column)
     {

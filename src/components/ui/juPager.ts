@@ -91,8 +91,8 @@ class juPage {
             this.firePageChange();
         }
     }
-    sort(sortProp, isAsc) {
-        this._sort = sortProp + '|' + (isAsc ? 'desc' : 'asc');
+    sort(sortProp, isDesc) {
+        this._sort ={sortBy:sortProp, direction:isDesc ? 'desc' : 'asc'};
         this.firePageChange();
     }
     refresh() {
@@ -111,7 +111,7 @@ class juPage {
         this.diffPageAction = this.activePage !== this._prevActivePage;
         this._prevActivePage = this.activePage;
         if (this.sspFn) {
-            this.sspFn({ pageSize: this.model.pageSize, pageNo: this.activePage, searchText: this.searchText, sort: this._sort })
+            this.sspFn({ pageSize: this.model.pageSize, pageNo: this.activePage, searchText: this.searchText, ...this._sort })
                 .then(res => {
                     this.totalRecords = res.totalRecords;
                     this._setTotalPage();
